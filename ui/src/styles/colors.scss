@@ -1,0 +1,48 @@
+.primary {
+  transition: background-color 0.3s ease;
+  &-bg {
+    background-color: var(--color-primary);
+  }
+  &-text {
+    color: var(--color-primary);
+  }
+
+  &.hoverable {
+    &:hover {
+      background-color: var(--color-primary-hover)
+    }
+  }
+}
+
+.error {
+  transition: background-color 0.3s ease;
+  &-bg {
+    background-color: var(--color-error);
+  }
+
+  &-text {
+   color: var(--color-error);
+  }
+
+  &.hoverable {
+    &:hover {
+      background-color: var(--color-error-hover)
+    }
+  }
+}
+
+.success {
+  transition: background-color 0.3s ease;
+  &-bg {
+    background-color: var(--color-success);
+  }
+  &-text {
+    color: var(--color-success);
+  }
+
+  &.hoverable {
+    &:hover {
+      background-color: var(--color-success-hover)
+    }
+  }
+}

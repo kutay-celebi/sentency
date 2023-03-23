@@ -1,0 +1,25 @@
+quarkus:
+  rest-client:
+    words-api:
+      uri: dummy
+  log:
+    level: DEBUG
+  smallrye-jwt:
+    enabled: false
+  datasource:
+    devservices:
+      enabled: true
+    db-kind: postgresql
+    jdbc:
+      enabled: true
+  flyway:
+    migrate-at-start: true
+  hibernate-orm:
+    database:
+      generation: none
+    scripts:
+      generation: none
+google:
+  project-id: dummy
+  client-id: dummy
+  client-secret: dummy

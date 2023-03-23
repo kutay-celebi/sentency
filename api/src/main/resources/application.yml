@@ -1,0 +1,74 @@
+google:
+  project-id: ${GOOGLE_PROJECT-ID}
+  client-id: ${GOOGLE_CLIENT-ID}
+  client-secret: ${GOOGLE_SECRET}
+quarkus:
+  hibernate-orm:
+    database:
+      generation: none
+    scripts:
+      generation: none
+  flyway:
+    migrate-at-start: true
+  rest-client:
+    words-api:
+      uri: ${WORDS_API_RAPID_API_URI}
+      headers:
+        x-rapidapi-host: ${WORDS_API_RAPID_API_HOST}
+        x-rapidapi-key: ${WORDS_API_RAPID_API_KEY}
+    logging:
+      body-limit: 1024
+      scope: request-response
+"%dev":
+  quarkus:
+    log:
+      category:
+        words-api:
+          level: DEBUG
+        "org.jboss.resteasy.reactive.client.logging":
+          level: DEBUG
+      level: INFO
+    http:
+      cors: false
+    smallrye-jwt:
+      enabled: false
+    flyway:
+      migrate-at-start: true
+    datasource:
+      devservices:
+        enabled: false
+      db-kind: postgresql
+      username: acar
+      password: acar
+      jdbc:
+        url: jdbc:postgresql://localhost:5432/acar
+
+"%prod":
+  quarkus:
+    http:
+      cors:
+        ~: true
+        methods: GET,PUT,POST,DELETE,OPTIONS,HEAD
+        access-control-allow-credentials: true
+        origins: sentency.nekasoft.com.tr
+        headers: content-type,accept,Authorization
+      access-log:
+        enabled: true
+    smallrye-jwt:
+      enabled: true
+    datasource:
+      devservices:
+        enabled: false
+      db-kind: ${DATABASE_DB-KIND:postgresql}
+      username: ${DATABASE_USERNAME}
+      password: ${DATABASE_PASSWORD}
+      jdbc:
+        url: ${DATABASE_URL}
+  smallrye:
+    jwt:
+      verify:
+        key:
+          location: /deployments/publicKey.pem
+      sign:
+        key:
+          location: /deployments/privateKey.pem

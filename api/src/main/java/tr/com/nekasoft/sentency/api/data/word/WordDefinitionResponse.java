@@ -1,0 +1,26 @@
+package tr.com.nekasoft.sentency.api.data.word;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.Set;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class WordDefinitionResponse implements Serializable {
+    private static final long serialVersionUID = -5358304466295154777L;
+
+    private String id;
+    private String definition;
+    private String definitionTr;
+    private Set<String> examples;
+    private Set<String> synonyms;
+    private String partOfSpeech;
+}

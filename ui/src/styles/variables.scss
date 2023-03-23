@@ -1,0 +1,20 @@
+/* color palette from <https://github.com/vuejs/theme> */
+
+:root {
+  --color-primary: #457cb6;
+  --color-primary-hover: #4b87c6;
+  --color-error:#dc3545;
+  --color-error-hover: #dc5865;
+  --color-success:#28a745;
+  --color-success-hover: #41c65f;
+
+  --color-active: var(--color-primary);
+
+  --color-bg-dark: #2c2c2c;
+  --color-white-mute: #f2f2f2;
+
+  --color-text: #2c3e50;
+  --color-text-secondary: #f2f2f2;
+
+  --color-border-main: rgba(84, 84, 84, 0.48);
+}

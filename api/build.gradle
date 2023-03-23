@@ -1,0 +1,73 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+
+
+    implementation "io.quarkus:quarkus-flyway"
+    implementation "io.quarkus:quarkus-jdbc-postgresql"
+    implementation "io.quarkus:quarkus-hibernate-orm-panache"
+    implementation "io.quarkus:quarkus-hibernate-orm"
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+
+    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+    implementation 'io.quarkus:quarkus-rest-client-reactive'
+    implementation 'io.quarkus:quarkus-resteasy-reactive'
+    implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
+
+    implementation 'io.quarkus:quarkus-config-yaml'
+    implementation 'io.quarkus:quarkus-jackson'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkus:quarkus-jacoco'
+
+    implementation 'org.apache.sshd:sshd-core'
+    implementation 'io.quarkus:quarkus-smallrye-jwt'
+    implementation 'io.quarkus:quarkus-smallrye-jwt-build'
+
+    implementation platform("com.google.cloud:libraries-bom:24.2.0")
+    implementation "com.google.cloud:google-cloud-translate"
+    implementation "com.google.api-client:google-api-client:2.0.0"
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'com.github.javafaker:javafaker:1.0.2'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
+}
+
+group 'tr.com.nekasoft.sentency.api'
+version '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+    systemProperty "GOOGLE_APPLICATION_CREDENTIALS", "./dev_google-service-key.json"
+    systemProperty "WORDS_API_RAPID_API_URI", "dummy"
+    systemProperty "WORDS_API_RAPID_API_HOST", "dummy"
+    systemProperty "WORDS_API_RAPID_API_KEY", "dummy"
+}
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
