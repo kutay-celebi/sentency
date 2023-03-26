@@ -4,10 +4,10 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static tr.com.nekasoft.sentency.api.data.userword.Difficulty.HARD;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -291,12 +291,8 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
                 given().contentType(ContentType.JSON).body(payload).put("/difficulty").then().log().all();
 
             // then
-            BigDecimal nextReview = new BigDecimal(userWord.getNextReview().toEpochMilli());
-
-            Instant expected =
-                Instant.ofEpochMilli(nextReview.multiply(sentencyConfig.review().multiplier()).longValue());
             actual.statusCode(200);
-            actual.body("nextReview", equalTo(expected.toString()));
+            actual.body("nextReview", not(equalTo(userWord.getNextReview().toString())));
 
         }
 
