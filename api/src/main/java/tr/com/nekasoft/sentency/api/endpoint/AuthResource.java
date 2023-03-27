@@ -36,9 +36,6 @@ public class AuthResource {
     @ConfigProperty(name = "google.client-id")
     protected String googleClientId;
 
-    @ConfigProperty(name = "google.client-secret")
-    protected String googleClientSecret;
-
     @Inject
     AuthService authService;
 

@@ -1,7 +1,6 @@
 google:
   project-id: ${GOOGLE_PROJECT-ID}
   client-id: ${GOOGLE_CLIENT-ID}
-  client-secret: ${GOOGLE_SECRET}
 quarkus:
   hibernate-orm:
     database:

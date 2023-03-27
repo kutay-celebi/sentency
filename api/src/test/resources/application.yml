@@ -22,4 +22,3 @@ quarkus:
 google:
   project-id: dummy
   client-id: dummy
-  client-secret: dummy
