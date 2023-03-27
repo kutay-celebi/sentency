@@ -1,16 +1,17 @@
 # Setup
 
+## Prerequisites
+
+1. JDK 11
+2. Gradle
+3. Node > v16
+4. Docker
+
 ## Preparation
 
 1. [Creating google service account](#creating-google-service-account).
 2. [Creating google OAuth Credentials](#creating-google-oauth-client).
 3. [Subscribing WordsAPI on RapidAPI](#subscribe-words-api-on-rapidapi).
-
-## Running on Docker
-
-1. Checkout project.
-2. Adjust the `docker-compose.yml` according to your parameters.
-3. Run `docker compose up -d`
 
 # Local Development
 
@@ -25,6 +26,7 @@
 | GOOGLE_PROJECT-ID              | Google project id                                                                                              |
 | GOOGLE_APPLICATION_CREDENTIALS | Google service accounts credential file path. [See also](#creating-google-service-account)                     |
 | GOOGLE_CLIENT-ID               | For google login. [See also](#creating-google-oauth-client)                                                    |
+| WORDS_API_RAPID_API_URI        | Rapid api base uri.                                                                                            |
 | WORDS_API_RAPID_API_HOST       | Rapid api host.                                                                                                |
 | WORDS_API_RAPID_API_KEY        | Rapid api key.                                                                                                 |
 
