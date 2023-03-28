@@ -49,7 +49,7 @@ const addToList = async () => {
 const searchWord = async () => {
   loading.value = true;
   await api.word
-    .searchWord(`/word/${searchWordModel.value}`)
+    .searchWord(searchWordModel.value)
     .then((resp) => {
       searchWordResponse.value = resp.data;
     })
