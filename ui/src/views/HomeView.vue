@@ -2,9 +2,7 @@
 import SntInput from "@/components/core/SntInput.vue";
 import { ref } from "vue";
 import SntButton from "@/components/core/SntButton.vue";
-import axiosInstance from "@/module/axios";
 import type { UserWordRequest, WordResponse } from "@/module/service";
-import type { AxiosResponse } from "axios";
 import WordDefinitionView from "@/components/word/WordDefinitionView.vue";
 import RiSearch2Line from "~icons/ri/search-2-line";
 import RiAddCircleLine from "~icons/ri/add-circle-line";
@@ -13,6 +11,7 @@ import RiArrowLeftCircleLine from "~icons/ri/arrow-left-circle-line";
 import { useAuthStore } from "@/stores";
 import SntStatus from "@/components/core/SntStatus.vue";
 import { useRouter } from "vue-router";
+import useApi from "@/api";
 
 const loading = ref(false);
 const searchWordModel = ref();
@@ -20,6 +19,8 @@ const searchWordResponse = ref<WordResponse>();
 const auth = useAuthStore();
 const showStatus = ref(false);
 const router = useRouter();
+
+const api = useApi();
 
 const closeSuccess = () => {
   showStatus.value = false;
@@ -32,8 +33,8 @@ const createSentence = () => {
 };
 const addToList = async () => {
   loading.value = true;
-  await axiosInstance
-    .post("/user-word", {
+  await api.userWord
+    .addToList({
       wordId: searchWordResponse.value?.id,
       userId: auth.userId,
     } as UserWordRequest)
@@ -47,9 +48,9 @@ const addToList = async () => {
 
 const searchWord = async () => {
   loading.value = true;
-  await axiosInstance
-    .get(`/word/${searchWordModel.value}`)
-    .then((resp: AxiosResponse<WordResponse>) => {
+  await api.word
+    .searchWord(`/word/${searchWordModel.value}`)
+    .then((resp) => {
       searchWordResponse.value = resp.data;
     })
     .finally(() => {

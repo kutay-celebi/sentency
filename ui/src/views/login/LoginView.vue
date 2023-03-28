@@ -42,11 +42,12 @@ import SntButton from "@/components/core/SntButton.vue";
 import axiosInstance from "@/module/axios";
 import SntForm from "@/components/core/SntForm.vue";
 
-import type { ErrorResponse, JwtResponse } from "@/module/service";
+import type { ErrorResponse } from "@/module/service";
 import SntAlert from "@/components/core/SntAlert.vue";
 import { useAuthStore } from "@/stores";
 import { useRouter } from "vue-router";
-import type { AxiosResponse, AxiosError } from "axios";
+import type { AxiosError } from "axios";
+import useApi from "@/api";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -66,12 +67,14 @@ const loginModel = ref({
 const errors = ref<ErrorResponse>();
 const loginForm = ref();
 
+const api = useApi();
+
 const handleSignSuccess = async (result: any) => {
-  await axiosInstance
-    .get("/auth/login/google/", { params: { "auth-code": result.credential } })
-    .then(async (resp: AxiosResponse<JwtResponse>) => {
-      await auth.loginSuccess(resp.data);
-      await router.push("/");
+  await api.auth
+    .loginWithGoogle(result.credential)
+    .then((resp) => {
+      auth.loginSuccess(resp.data);
+      router.push("/");
     })
     .catch((err: AxiosError<ErrorResponse>) => {
       errors.value = err.response?.data;
@@ -84,8 +87,8 @@ const login = async () => {
     return;
   }
 
-  await axiosInstance
-    .post("/auth/login", loginModel.value)
+  await api.auth
+    .login(loginModel.value.username, loginModel.value.password)
     .then((resp) => {
       auth.loginSuccess(resp.data);
       router.push("/");

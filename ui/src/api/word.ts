@@ -7,3 +7,9 @@ export const fetchWord = (wordId: string | undefined): Promise<AxiosResponse<Wor
     url: `/word/id/${wordId}`,
   });
 };
+
+export const searchWord = (word: string | undefined): Promise<AxiosResponse<WordResponse>> => {
+  return axiosInstance({
+    url: `/word/${word}`,
+  });
+};
