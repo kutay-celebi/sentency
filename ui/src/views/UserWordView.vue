@@ -33,11 +33,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { onBeforeMount, ref } from "vue";
 import type { Difficulty, UserWordResponse, WordResponse } from "@/module/service";
 import SntButton from "@/components/core/SntButton.vue";
-import router from "@/router";
 import { useDateUtility } from "@/composable/date-utility";
 import useApi from "@/api";
 
@@ -46,6 +45,7 @@ const route = useRoute();
 const userWordResponse = ref<UserWordResponse>();
 const word = ref<WordResponse>();
 const api = useApi();
+const router = useRouter();
 
 const adjustDifficulty = (difficulty: Difficulty) => {
   if (!userWordResponse.value) {
