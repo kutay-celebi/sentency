@@ -1,7 +1,5 @@
 import axios from "axios";
 import { useAuthStore } from "@/stores";
-import router from "@/router";
-// import { useRouter } from "vue-router";
 
 const axiosInstance = axios.create({
   baseURL: "/api",
@@ -35,7 +33,6 @@ axiosInstance.interceptors.response.use(
       if (response?.status === 401) {
         const authStore = useAuthStore();
         authStore.logout();
-        await router.push("/login");
       }
     }
     return Promise.reject(err);
