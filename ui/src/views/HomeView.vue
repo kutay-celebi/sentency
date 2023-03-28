@@ -56,7 +56,7 @@ const searchWord = async () => {
       <div class="search-word-input">
         <div>Search for a word...</div>
         <snt-input v-model="searchWordModel"></snt-input>
-        <snt-button @click="searchWord">
+        <snt-button :loading="loading" @click="searchWord">
           <ri-search2-line />
           Search
         </snt-button>
