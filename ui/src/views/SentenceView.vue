@@ -83,7 +83,7 @@ const fetchWord = async () => {
 };
 
 const fetchUserWord = async () => {
-  await api.userWord.fetchUserWord((route.params.wordid as string) || auth.userId).then((response) => {
+  await api.userWord.fetchNextReview((route.params.wordid as string) || auth.userId).then((response) => {
     userWord.value = response.data;
     sentenceRequest.value.wordId = userWord.value?.wordId;
   });

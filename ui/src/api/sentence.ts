@@ -13,6 +13,6 @@ export const addSentence = (sentence: SentenceRequest): Promise<AxiosResponse<Se
   return axiosInstance({
     url: `/sentence`,
     method: "post",
-    params: { sentence },
+    data: { ...sentence },
   });
 };
