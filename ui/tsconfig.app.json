@@ -4,6 +4,7 @@
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "isolatedModules": false,
+    "preserveValueImports": false,
     "importsNotUsedAsValues": "preserve",
     "composite": true,
     "target": "ES2022",

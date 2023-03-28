@@ -36,9 +36,9 @@ const router = createRouter({
           },
         },
         {
-          path: "/sentence",
+          path: "/sentence/:wordid?",
           component: SentenceView,
-          name: "sentence-view",
+          name: "sentence",
           meta: {
             auth: true,
           },

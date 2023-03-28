@@ -26,7 +26,7 @@
 <script lang="ts" setup>
 import RiCheckboxCircleLine from "~icons/ri/checkbox-circle-line";
 import RiChatCheckLine from "~icons/ri/chat-check-line";
-import { onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 import type {
   SentencePersistResponse,
   SentenceRequest,
@@ -41,15 +41,19 @@ import SntInput from "@/components/core/SntInput.vue";
 import SntButton from "@/components/core/SntButton.vue";
 import SntForm from "@/components/core/SntForm.vue";
 import WordDefinitionView from "@/components/word/WordDefinitionView.vue";
-import router from "@/router";
+import { useRoute, useRouter } from "vue-router";
+import useUserWordApi from "@/api/user-word";
 
 const isLoading = ref<boolean>(false);
 const userWord = ref<UserWordResponse>();
 const word = ref<WordResponse>();
 const auth = useAuthStore();
+const route = useRoute();
+const router = useRouter();
 const sentenceRequest = ref<SentenceRequest>({ userId: auth.userId, wordId: "", sentence: "" });
 const sentenceForm = ref();
 const sentenceRules = [(val: string) => !!val || "Sentence should not be empty."];
+const userWordApi = useUserWordApi();
 
 const addSentence = async () => {
   isLoading.value = true;
@@ -82,15 +86,15 @@ const fetchWord = async () => {
   });
 };
 
-async function fetchUserWord() {
-  await axiosInstance.get(`/user-word/${auth.userId}/next-review`).then((resp: AxiosResponse<UserWordResponse>) => {
-    userWord.value = resp.data;
+const fetchUserWord = () => {
+  userWordApi.fetchUserWord((route.params.wordid as string) || auth.userId).then((response) => {
+    userWord.value = response.data;
     sentenceRequest.value.wordId = userWord.value?.wordId;
   });
-}
+};
 
 onMounted(async () => {
-  await fetchUserWord();
+  fetchUserWord();
   await fetchWord();
 });
 </script>

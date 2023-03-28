@@ -8,19 +8,27 @@ import type { AxiosResponse } from "axios";
 import WordDefinitionView from "@/components/word/WordDefinitionView.vue";
 import RiSearch2Line from "~icons/ri/search-2-line";
 import RiAddCircleLine from "~icons/ri/add-circle-line";
+import RiEditLine from "~icons/ri/edit-line";
+import RiArrowLeftCircleLine from "~icons/ri/arrow-left-circle-line";
 import { useAuthStore } from "@/stores";
 import SntStatus from "@/components/core/SntStatus.vue";
+import { useRouter } from "vue-router";
 
 const loading = ref(false);
 const searchWordModel = ref();
 const searchWordResponse = ref<WordResponse>();
 const auth = useAuthStore();
 const showStatus = ref(false);
+const router = useRouter();
 
 const closeSuccess = () => {
   showStatus.value = false;
   searchWordModel.value = undefined;
   searchWordResponse.value = undefined;
+};
+
+const createSentence = () => {
+  router.push({ name: "sentence", params: { wordid: searchWordResponse.value?.id } });
 };
 const addToList = async () => {
   loading.value = true;
@@ -71,7 +79,14 @@ const searchWord = async () => {
     </div>
 
     <snt-status v-if="showStatus" message="The word has been successfully added to the work list.">
-      <snt-button :loading="loading" @click="closeSuccess">BACK</snt-button>
+      <snt-button :loading="loading" @click="closeSuccess">
+        <ri-arrow-left-circle-line />
+        BACK
+      </snt-button>
+      <snt-button :loading="loading" @click="createSentence">
+        <ri-edit-line />
+        CREATE SENTENCE
+      </snt-button>
     </snt-status>
   </div>
 </template>
@@ -87,7 +102,7 @@ const searchWord = async () => {
 }
 
 .snt-button {
-  //margin-top: 1rem;
+  margin: 0 0.125rem;
 }
 
 .action-bar {
