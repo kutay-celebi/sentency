@@ -35,24 +35,26 @@ const props = defineProps({
 <template>
   <div class="word-title">{{ word.word.toUpperCase() }}</div>
   <snt-tab-view v-model="activeTab" :tabs="tabs"></snt-tab-view>
-  <transition name="slide" mode="out-in">
-    <div v-if="activeTab === 'definitions'">
-      <div v-for="definition in word.definitions" :key="definition.id" class="definition">
-        <i class="part-of-speech">{{ definition.partOfSpeech }}:</i>
-        {{ definition.definitionTr }}
+  <div class="definition-container">
+    <transition name="slide" mode="out-in">
+      <div v-if="activeTab === 'definitions'">
+        <div v-for="definition in word.definitions" :key="definition.id" class="definition">
+          <i class="part-of-speech">{{ definition.partOfSpeech }}:</i>
+          {{ definition.definitionTr }}
+        </div>
       </div>
-    </div>
-    <div v-else-if="activeTab === 'examples'">
-      <div v-for="(ex, idx) in examples" :key="`ex-${idx}`" class="definition">
-        {{ ex }}
+      <div v-else-if="activeTab === 'examples'">
+        <div v-for="(ex, idx) in examples" :key="`ex-${idx}`" class="definition">
+          {{ ex }}
+        </div>
       </div>
-    </div>
-    <div v-else-if="activeTab === 'Synonyms'">
-      <div v-for="(syn, idx) in synonyms" :key="`syn-${idx}`" class="definition">
-        {{ syn }}
+      <div v-else-if="activeTab === 'Synonyms'">
+        <div v-for="(syn, idx) in synonyms" :key="`syn-${idx}`" class="definition">
+          {{ syn }}
+        </div>
       </div>
-    </div>
-  </transition>
+    </transition>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -62,6 +64,13 @@ const props = defineProps({
   font-size: 18px;
   text-decoration: underline;
 }
+
+.definition-container {
+  height: 40vh;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
 .definition {
   border: 1px solid var(--color-border-main);
   border-radius: 4px;
