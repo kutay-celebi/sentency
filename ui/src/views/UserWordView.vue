@@ -18,11 +18,6 @@
           <td>{{ dateLongFormat(userWordResponse.lastReview) }}</td>
         </tr>
         <tr>
-          <td class="table-field">Next Review</td>
-          <td class="table-field">:</td>
-          <td>{{ dateLongFormat(userWordResponse.nextReview) }}</td>
-        </tr>
-        <tr>
           <td class="table-field">Difficulty</td>
           <td class="table-field">:</td>
           <td>{{ userWordResponse.difficulty }}</td>
