@@ -10,7 +10,7 @@
     </main>
     <snt-tab-bar>
       <snt-tab-bar-item to="/">
-        <ri-home2-line />
+        <ri-search2-line />
       </snt-tab-bar-item>
       <snt-tab-bar-item to="/sentence">
         <ri-pencil-line />
@@ -31,15 +31,7 @@ import SntTabBarItem from "@/components/core/SntTabBarItem.vue";
 import RiUser5Line from "~icons/ri/user-5-line";
 import RiPencilLine from "~icons/ri/pencil-line";
 import RiListCheck2 from "~icons/ri/list-check-2";
-import RiArrowLeftSFill from "~icons/ri/arrow-left-s-fill";
-import RiHome2Line from "~icons/ri/home-2-line";
-import { useRoute, useRouter } from "vue-router";
-import { useNavigation } from "@/stores";
-import { computed } from "vue";
-
-const router = useRouter();
-const nav = useNavigation();
-const route = useRoute();
+import RiSearch2Line from "~icons/ri/search-2-line";
 </script>
 
 <style lang="scss" scoped>
@@ -78,6 +70,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
+
   img {
     width: 30px;
   }
