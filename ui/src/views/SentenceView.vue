@@ -86,15 +86,15 @@ const fetchWord = async () => {
   });
 };
 
-const fetchUserWord = () => {
-  userWordApi.fetchUserWord((route.params.wordid as string) || auth.userId).then((response) => {
+const fetchUserWord = async () => {
+  await userWordApi.fetchUserWord((route.params.wordid as string) || auth.userId).then((response) => {
     userWord.value = response.data;
     sentenceRequest.value.wordId = userWord.value?.wordId;
   });
 };
 
 onMounted(async () => {
-  fetchUserWord();
+  await fetchUserWord();
   await fetchWord();
 });
 </script>
