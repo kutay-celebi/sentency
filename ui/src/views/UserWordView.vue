@@ -40,33 +40,38 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
 import { onBeforeMount, ref } from "vue";
-import axiosInstance from "@/module/axios";
-import type { Difficulty, UserWordDifficultyRequest, UserWordResponse, WordResponse } from "@/module/service";
+import type { Difficulty, UserWordResponse, WordResponse } from "@/module/service";
 import SntButton from "@/components/core/SntButton.vue";
 import router from "@/router";
 import { useDateUtility } from "@/composable/date-utility";
+import useApi from "@/api";
 
 let { dateLongFormat } = useDateUtility();
 const route = useRoute();
 const userWordResponse = ref<UserWordResponse>();
 const word = ref<WordResponse>();
+const api = useApi();
 
 const adjustDifficulty = (difficulty: Difficulty) => {
-  axiosInstance
-    .put("/user-word/difficulty", {
-      userWordId: userWordResponse.value?.id,
+  if (!userWordResponse.value) {
+    return;
+  }
+
+  api.userWord
+    .adjustDifficulty({
+      userWordId: userWordResponse.value.id,
       difficulty: difficulty,
-    } as UserWordDifficultyRequest)
+    })
     .then(() => {
       router.push("/");
     });
 };
 
 onBeforeMount(async () => {
-  await axiosInstance.get(`/user-word/${route.params.id}`).then((response) => {
+  await api.userWord.fetchUserWord(route.params.id as string).then((response) => {
     userWordResponse.value = response.data;
   });
-  await axiosInstance.get(`/word/id/${userWordResponse.value?.wordId}`).then((resp) => {
+  await api.word.fetchWord(userWordResponse.value?.wordId).then((resp) => {
     word.value = resp.data;
   });
 });
