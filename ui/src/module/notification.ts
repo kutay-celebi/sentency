@@ -8,8 +8,8 @@ export const useNotification = () => {
   if (notification) {
     return notification;
   }
-  const error = (msg: string, title?: string) => {
-    NotificationEventBus.emit({ message: msg, title: title, type: "error" });
+  const error = (msg: string, title?: string, caption?: string) => {
+    NotificationEventBus.emit({ message: msg, title: title, caption: caption, type: "error" });
   };
 
   return {
@@ -25,8 +25,8 @@ export const NotificationPlugin: Plugin = async (app, options) => {
     app.mount(document.createElement("div"));
   });
 
-  const error = (msg: string, title?: string) => {
-    bus.emit({ message: msg, title: title, type: "error" });
+  const error = (msg: string, title?: string, caption?: string) => {
+    bus.emit({ message: msg, title: title, caption: caption, type: "error" });
   };
 
   app.provide(NotificationInjectionKey, {
@@ -39,11 +39,13 @@ export const NotificationInjectionKey: InjectionKey<NotificationContext> = Symbo
 export const NotificationEventBus = useEventBus(NotificationBusKey);
 
 export interface Notification {
+  id?: string | number;
   title?: string;
   message: string;
+  caption?: string;
   type: "error" | "info";
 }
 
 interface NotificationContext {
-  error: (msg: string, title?: string) => void;
+  error: (msg: string, title?: string, caption?: string) => void;
 }

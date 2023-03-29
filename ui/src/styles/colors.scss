@@ -1,4 +1,4 @@
-.primary {
+.primary, .info {
   transition: background-color 0.3s ease;
   &-bg {
     background-color: var(--color-primary);
@@ -9,7 +9,7 @@
 
   &.hoverable {
     &:hover {
-      background-color: var(--color-primary-hover)
+      background-color: var(--color-primary-hover);
     }
   }
 }

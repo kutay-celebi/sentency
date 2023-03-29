@@ -1,5 +1,7 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useAuthStore } from "@/stores";
+import { useNotification } from "@/module/notification";
+import { ErrorResponse } from "@/module/service";
 
 const axiosInstance = axios.create({
   baseURL: "/api",
@@ -24,18 +26,26 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (resp) => {
-    // console.log(resp.data);
     return Promise.resolve(resp);
   },
-  async (err) => {
+  async (err: AxiosError) => {
     if (err) {
       const response = err.response;
       if (response?.status === 401) {
         const authStore = useAuthStore();
         authStore.logout();
       }
+      if (response && response.data) {
+        const notification = useNotification();
+        notification.error(
+          (response.data as ErrorResponse).errors[0],
+          (response.data as ErrorResponse).code,
+          `Error ID: ${(response.data as ErrorResponse).uuid}`
+        );
+      }
+      return Promise.reject(response?.data);
     }
-    return Promise.reject(err);
+    return Promise.reject();
   }
 );
 
