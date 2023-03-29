@@ -8,7 +8,7 @@
     "importsNotUsedAsValues": "preserve",
     "composite": true,
     "target": "ES2022",
-    "lib": ["es2018", "ES2021" ],
+    "lib": ["es2018", "ES2021", "DOM" ],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
