@@ -7,6 +7,7 @@ import router from "./router";
 import "./styles/index.scss";
 import { useAuthStore } from "@/stores";
 import { AlertPlugin } from "@/module/alert";
+import { NotificationPlugin } from "@/module/notification";
 
 const app = createApp(App);
 
@@ -17,6 +18,7 @@ app.use(vue3GoogleLogin, {
 app.use(createPinia());
 app.use(router);
 app.use(AlertPlugin);
+app.use(NotificationPlugin);
 
 router.beforeEach((to, from, next) => {
   if (to.meta.auth) {
