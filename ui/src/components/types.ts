@@ -14,3 +14,9 @@ export interface SntTab {
   key: string;
   label: string;
 }
+
+export interface PageItem {
+  active: boolean;
+  label: string | number;
+  clickable: boolean;
+}
