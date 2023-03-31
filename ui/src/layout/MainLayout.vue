@@ -38,7 +38,8 @@ import RiSearch2Line from "~icons/ri/search-2-line";
 .main-layout {
   display: flex;
   flex-direction: column;
-  height: calc(100svh - 3rem);
+  padding: 40px 0;
+  height: 100%;
   overflow: hidden;
   position: relative;
 }
@@ -46,16 +47,19 @@ import RiSearch2Line from "~icons/ri/search-2-line";
 .main {
   position: relative;
   padding: 0.5rem;
-  height: calc(100vh - 3rem);
-  flex: 1;
+  height: calc(100svh - 80px);
+  overflow-y: auto;
 }
 
 nav {
-  height: 3rem;
+  height: 40px;
   background-color: var(--color-primary);
   display: flex;
   align-items: center;
   overflow: hidden;
+  position: fixed;
+  width: 100%;
+  top: calc(env(safe-area-inset-bottom));
 }
 
 .go-back {
