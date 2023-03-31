@@ -68,3 +68,39 @@ export interface UserWordDifficultyRequest {
   userWordId: string;
   difficulty: Difficulty;
 }
+
+export interface SortItem {
+  field: string;
+  direction: string;
+}
+
+export enum QueryItem {
+  OPERATOR_EQUAL = ":",
+  GREATER_THAN = ">=",
+  GREATER = ">",
+  LESS_THAN = "<=",
+  LESS = "<",
+  OPERATOR_NOT_EQUAL = "!:",
+  OPERATOR_CONTAIN = "~",
+  OPERATOR_NOT_CONTAIN = "!~",
+}
+
+export interface StringQueryItem {
+  value: string;
+  operator?: QueryItem;
+}
+
+export interface UserWordPageRequest {
+  userId: StringQueryItem;
+  word?: StringQueryItem;
+  sorts?: SortItem[];
+  size?: number;
+  page?: number;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalPage: number;
+}

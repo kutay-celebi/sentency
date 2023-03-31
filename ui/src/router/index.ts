@@ -5,6 +5,7 @@ import HomeView from "@/views/HomeView.vue";
 import ErrorView from "@/views/ErrorView.vue";
 import SentenceView from "@/views/SentenceView.vue";
 import UserWordView from "@/views/UserWordView.vue";
+import WordListView from "@/views/WordListView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,14 @@ const router = createRouter({
           path: "/sentence/:wordid?",
           component: SentenceView,
           name: "sentence",
+          meta: {
+            auth: true,
+          },
+        },
+        {
+          path: "/word-list",
+          component: WordListView,
+          name: "word-list",
           meta: {
             auth: true,
           },

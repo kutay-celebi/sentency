@@ -15,7 +15,7 @@
       <snt-tab-bar-item to="/sentence">
         <ri-pencil-line />
       </snt-tab-bar-item>
-      <snt-tab-bar-item to="#">
+      <snt-tab-bar-item to="/word-list">
         <ri-list-check2 />
       </snt-tab-bar-item>
       <snt-tab-bar-item to="#">

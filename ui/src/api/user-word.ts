@@ -1,6 +1,12 @@
 import axiosInstance from "@/module/axios";
 import { AxiosResponse } from "axios";
-import { UserWordDifficultyRequest, UserWordRequest, UserWordResponse } from "@/module/service";
+import {
+  PageResponse,
+  UserWordDifficultyRequest,
+  UserWordPageRequest,
+  UserWordRequest,
+  UserWordResponse,
+} from "@/module/service";
 
 export const fetchNextReview = (userWordId: string): Promise<AxiosResponse<UserWordResponse>> => {
   return axiosInstance({
@@ -25,6 +31,14 @@ export const adjustDifficulty = (payload: UserWordDifficultyRequest): Promise<Ax
 export const addToList = (payload: UserWordRequest): Promise<AxiosResponse<UserWordResponse>> => {
   return axiosInstance({
     url: `/user-word`,
+    method: "post",
+    data: payload,
+  });
+};
+
+export const query = (payload: UserWordPageRequest): Promise<AxiosResponse<PageResponse<UserWordResponse>>> => {
+  return axiosInstance({
+    url: `/user-word/query`,
     method: "post",
     data: payload,
   });
