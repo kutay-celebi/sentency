@@ -35,10 +35,10 @@ onBeforeMount(() => {
 });
 </script>
 <template>
-  <div>
-    <snt-pagination v-model="query.page" :total="words?.totalPage"> </snt-pagination>
+  <div v-if="words">
+    <snt-pagination v-model="query.page" :total="words.totalPage"> </snt-pagination>
     <snt-list>
-      <snt-list-item v-for="word in words?.content" :key="word.id">
+      <snt-list-item v-for="word in words.content" :key="word.id">
         <div>{{ word.word }}</div>
         <div>
           <span class="text-bold">Last Review:</span>
