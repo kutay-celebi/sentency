@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!isWordNotFound">
     <word-definition-view v-if="word" :word="word" />
 
     <h3 class="text-center">
@@ -25,6 +25,7 @@
       </snt-button>
     </div>
   </div>
+  <snt-alert v-else type="error"> No word has been added to the list yet </snt-alert>
 </template>
 
 <script lang="ts" setup>
@@ -39,17 +40,22 @@ import SntForm from "@/components/core/SntForm.vue";
 import WordDefinitionView from "@/components/word/WordDefinitionView.vue";
 import { useRoute, useRouter } from "vue-router";
 import useApi from "@/api";
+import { AxiosError } from "axios";
+import SntAlert from "@/components/core/SntAlert.vue";
 
-const isLoading = ref<boolean>(false);
-const userWord = ref<UserWordResponse>();
-const word = ref<WordResponse>();
 const auth = useAuthStore();
 const route = useRoute();
 const router = useRouter();
-const sentenceRequest = ref<SentenceRequest>({ userId: auth.userId, wordId: "", sentence: "" });
-const sentenceForm = ref();
-const sentenceRules = [(val: string) => !!val || "Sentence should not be empty."];
 const api = useApi();
+
+const isLoading = ref<boolean>(false);
+const isWordNotFound = ref<boolean>(false);
+
+const sentenceForm = ref();
+const sentenceRequest = ref<SentenceRequest>({ userId: auth.userId, wordId: "", sentence: "" });
+const sentenceRules = [(val: string) => !!val || "Sentence should not be empty."];
+const userWord = ref<UserWordResponse>();
+const word = ref<WordResponse>();
 
 const addSentence = async () => {
   isLoading.value = true;
@@ -83,10 +89,18 @@ const fetchWord = async () => {
 };
 
 const fetchUserWord = async () => {
-  await api.userWord.fetchNextReview((route.params.wordid as string) || auth.userId).then((response) => {
-    userWord.value = response.data;
-    sentenceRequest.value.wordId = userWord.value?.wordId;
-  });
+  isWordNotFound.value = false;
+  await api.userWord
+    .fetchNextReview((route.params.wordid as string) || auth.userId)
+    .then((response) => {
+      userWord.value = response.data;
+      sentenceRequest.value.wordId = userWord.value?.wordId;
+    })
+    .catch((err: AxiosError) => {
+      if (err.status === 404) {
+        isWordNotFound.value = true;
+      }
+    });
 };
 
 onMounted(async () => {
