@@ -36,11 +36,11 @@ quarkus:
     datasource:
       devservices:
         enabled: false
-      db-kind: postgresql
-      username: acar
-      password: acar
+      db-kind: ${DATABASE_DB-KIND:postgresql}
+      username: ${DATABASE_USERNAME}
+      password: ${DATABASE_PASSWORD}
       jdbc:
-        url: jdbc:postgresql://localhost:5432/acar
+        url: ${DATABASE_URL}
 
 "%prod":
   quarkus:
