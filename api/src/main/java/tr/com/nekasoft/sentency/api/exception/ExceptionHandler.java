@@ -1,10 +1,5 @@
 package tr.com.nekasoft.sentency.api.exception;
 
-import java.util.Collections;
-import java.util.stream.Collectors;
-
-import javax.ws.rs.NotFoundException;
-
 import io.quarkus.hibernate.validator.runtime.jaxrs.ResteasyReactiveViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
@@ -13,6 +8,10 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import tr.com.nekasoft.sentency.api.data.error.ErrorResponse;
 import tr.com.nekasoft.sentency.api.data.error.ValidationErrorResponse;
 import tr.com.nekasoft.sentency.api.data.error.ValidationErrorResponseItem;
+
+import javax.ws.rs.NotFoundException;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ExceptionHandler {
@@ -46,7 +45,7 @@ public class ExceptionHandler {
         log.error("\n\nError | {}:\nCODE: {}\nMessage: {}\nArguments: {} \n\n", resp.getUuid(), resp.getCode(),
                   resp.getErrors(), ex.getArgs());
 
-        log.debug("Stacktrace | {}", resp.getUuid(), ex);
+        log.error("Stacktrace | {}", resp.getUuid(), ex);
 
         return RestResponse.status(ex.getStatus(), resp);
     }
