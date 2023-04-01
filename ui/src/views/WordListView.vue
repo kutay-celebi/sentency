@@ -41,6 +41,7 @@ onBeforeMount(() => {
   fetchUserWords();
 });
 </script>
+
 <template>
   <div v-if="words">
     <snt-pagination v-model="query.page" :total="words.totalPage"> </snt-pagination>
@@ -57,7 +58,7 @@ onBeforeMount(() => {
       </snt-list-item>
     </snt-list>
   </div>
-  <snt-alert type="primary"> No words have been added to the list yet. </snt-alert>
+  <snt-alert v-else type="primary"> No words have been added to the list yet. </snt-alert>
 </template>
 
 <style lang="scss" scoped>
