@@ -1,7 +1,7 @@
 <script lang="ts" setup></script>
 <template>
   <li class="snt-list-item">
-    <div>
+    <div class="snt-list-item-content">
       <slot></slot>
     </div>
     <div>
@@ -21,6 +21,10 @@
   transition: 0.3s ease background-color;
   &:hover {
     background-color: var(--color-hover);
+  }
+
+  &-content {
+    width: 100%;
   }
 }
 </style>
