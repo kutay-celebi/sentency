@@ -17,4 +17,6 @@ public interface UserWordService {
   PageResponse<UserWordResponse> query(UserWordPageRequest request);
 
   UserWordResponse findById(String id);
+
+  UserWordResponse removeReviewList(String userWordId);
 }

@@ -41,23 +41,19 @@ public class UserWordServiceImpl implements UserWordService {
   public UserWordResponse addWord(UserWordRequest request) {
     DefaultQueryRequest userWordQuery = DefaultQueryRequest.builder()
         .query("word.id = :wordId")
-        .parameters(
-            Parameters.with("wordId", request.getWordId()))
+        .parameters(Parameters.with("wordId", request.getWordId()))
         .build();
 
     Optional<UserWord> userWord = userWordRepository.softFind(userWordQuery).firstResultOptional();
     if (userWord.isEmpty()) {
       User user = userRepository.softFindById(request.getUserId())
-          .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
-              Map.of("user-id", request.getUserId())));
+          .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-id", request.getUserId())));
       Word word = wordRepository.softFindById(request.getWordId())
-          .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
-              Map.of("word-id", request.getWordId())));
+          .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("word-id", request.getWordId())));
 
       Duration toBeAdd = Duration.ofHours(sentencyConfig.review().medium().longValue());
       Instant initialNextReview = Instant.now().plus(toBeAdd);
-      UserWord toBeSaved = UserWord.builder().nextReview(initialNextReview).user(user).word(word)
-          .build();
+      UserWord toBeSaved = UserWord.builder().nextReview(initialNextReview).user(user).word(word).build();
       userWordRepository.persistAndFlush(toBeSaved);
       return toBeSaved.toResponse();
     }
@@ -82,8 +78,7 @@ public class UserWordServiceImpl implements UserWordService {
   @Override
   public UserWordResponse adjustDifficulty(UserWordDifficultyRequest request) {
     UserWord userWord = userWordRepository.softFindById(request.getUserWordId())
-        .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
-            Map.of("user-word-id", request.getUserWordId())));
+        .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-word-id", request.getUserWordId())));
     BigDecimal hoursToBeAdded;
     switch (request.getDifficulty()) {
       case EASY:
@@ -101,8 +96,7 @@ public class UserWordServiceImpl implements UserWordService {
     hoursToBeAdded = hoursToBeAdded.multiply(sentencyConfig.review().multiplier())
         .multiply(BigDecimal.valueOf(userWord.getCount()));
 
-    userWord.setNextReview(
-        userWord.getNextReview().plus(Duration.ofHours(hoursToBeAdded.longValue())));
+    userWord.setNextReview(userWord.getNextReview().plus(Duration.ofHours(hoursToBeAdded.longValue())));
     userWord.setDifficulty(request.getDifficulty());
     userWordRepository.persistAndFlush(userWord);
     return userWord.toResponse();
@@ -116,8 +110,17 @@ public class UserWordServiceImpl implements UserWordService {
   @Override
   public UserWordResponse findById(String id) {
     return userWordRepository.softFindById(id)
-        .orElseThrow(
-            () -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-word-id", id)))
+        .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-word-id", id)))
         .toResponse();
+  }
+
+  @Override
+  @Transactional
+  public UserWordResponse removeReviewList(String userWordId) {
+    UserWord userWord = userWordRepository.softFindById(userWordId)
+        .orElseThrow(ExceptionCode.DATA_NOT_FOUND::toException);
+    userWord.setIsActive(Boolean.FALSE);
+    userWordRepository.persistAndFlush(userWord);
+    return userWord.toResponse();
   }
 }

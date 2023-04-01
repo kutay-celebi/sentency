@@ -26,4 +26,5 @@ public class UserWordResponse implements Serializable {
   private Instant lastReview;
   private Difficulty difficulty;
   private Long count;
+  private Boolean isActive;
 }

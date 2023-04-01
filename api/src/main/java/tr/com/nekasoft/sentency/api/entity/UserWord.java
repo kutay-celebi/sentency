@@ -53,6 +53,10 @@ public class UserWord extends BaseEntity {
   @Column(name = "review_count")
   private Long count = 0L;
 
+  @Builder.Default
+  @Column(name = "is_active")
+  private Boolean isActive = Boolean.TRUE;
+
   public UserWordResponse toResponse() {
     return UserWordResponse.builder()
         .id(id)
@@ -63,6 +67,7 @@ public class UserWord extends BaseEntity {
         .lastReview(lastReview)
         .difficulty(difficulty)
         .count(count)
+        .isActive(isActive)
         .build();
   }
 }

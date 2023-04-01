@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -13,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+import org.jboss.resteasy.reactive.RestPath;
 import tr.com.nekasoft.sentency.api.data.userword.UserWordDifficultyRequest;
 import tr.com.nekasoft.sentency.api.data.userword.UserWordPageRequest;
 import tr.com.nekasoft.sentency.api.data.userword.UserWordRequest;
@@ -56,5 +58,12 @@ public class UserWordResource {
   @Consumes(APPLICATION_JSON)
   public Response addWord(@Valid UserWordRequest request) {
     return Response.ok(userWordService.addWord(request)).build();
+  }
+
+  @DELETE
+  @Consumes(APPLICATION_JSON)
+  @Path("/{user-word-id}")
+  public Response addWord(@RestPath("user-word-id") String userWordId) {
+    return Response.ok(userWordService.removeReviewList(userWordId)).build();
   }
 }
