@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores";
 import { PageResponse, UserWordPageRequest, UserWordResponse } from "@/module/service";
 import { useDateUtility } from "@/composable/date-utility";
 import SntPagination from "@/components/core/SntPagination.vue";
+import SntAlert from "@/components/core/SntAlert.vue";
 
 const api = useApi();
 const authStore = useAuthStore();
@@ -19,6 +20,12 @@ const query = ref<UserWordPageRequest>({
   userId: {
     value: authStore.userId,
   },
+  sorts: [
+    {
+      field: "nextReview",
+      direction: "asc",
+    },
+  ],
 });
 
 watch(query.value, () => {
@@ -42,13 +49,21 @@ onBeforeMount(() => {
         <div>{{ word.word }}</div>
         <div>
           <span class="text-bold">Last Review:</span>
-          <span style="margin-left: 0.5rem">{{
-            word.lastReview ? dateUtility.dateLongFormat(word.lastReview) : "-"
-          }}</span>
+          <span style="margin-left: 0.5rem">
+            {{ word.lastReview ? dateUtility.dateLongFormat(word.lastReview) : "-" }}
+          </span>
         </div>
+        <span class="word-count"> Count: {{ word.count }} </span>
       </snt-list-item>
     </snt-list>
   </div>
+  <snt-alert type="primary"> No words have been added to the list yet. </snt-alert>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.word-count {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+</style>
