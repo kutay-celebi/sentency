@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
         const authStore = useAuthStore();
         authStore.logout();
       }
-      if (response && response.data) {
+      if (response && response.data && response.status === 500) {
         const notification = useNotification();
         notification.error(
           (response.data as ErrorResponse).errors[0],
@@ -43,7 +43,7 @@ axiosInstance.interceptors.response.use(
           `Error ID: ${(response.data as ErrorResponse).uuid}`
         );
       }
-      return Promise.reject(response?.data);
+      return Promise.reject(response);
     }
     return Promise.reject();
   }
