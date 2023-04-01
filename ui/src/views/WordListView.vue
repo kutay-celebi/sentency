@@ -11,6 +11,9 @@ import SntAlert from "@/components/core/SntAlert.vue";
 
 const api = useApi();
 const authStore = useAuthStore();
+
+const isLoading = ref<boolean>(false);
+
 const words = ref<PageResponse<UserWordResponse>>();
 const dateUtility = useDateUtility();
 
@@ -32,9 +35,15 @@ watch(query.value, () => {
   fetchUserWords();
 });
 const fetchUserWords = async () => {
-  await api.userWord.query(query.value).then((resp) => {
-    words.value = resp.data;
-  });
+  isLoading.value = true;
+  await api.userWord
+    .query(query.value)
+    .then((resp) => {
+      words.value = resp.data;
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
 };
 
 onBeforeMount(() => {
@@ -44,7 +53,7 @@ onBeforeMount(() => {
 
 <template>
   <div v-if="words">
-    <snt-pagination v-model="query.page" :total="words.totalPage"> </snt-pagination>
+    <snt-pagination v-model="query.page" :total="words.totalPage" />
     <snt-list>
       <snt-list-item v-for="word in words.content" :key="word.id">
         <div>{{ word.word }}</div>
@@ -58,7 +67,7 @@ onBeforeMount(() => {
       </snt-list-item>
     </snt-list>
   </div>
-  <snt-alert v-else type="primary"> No words have been added to the list yet. </snt-alert>
+  <snt-alert v-if="!words && !isLoading" type="primary"> No words have been added to the list yet.</snt-alert>
 </template>
 
 <style lang="scss" scoped>

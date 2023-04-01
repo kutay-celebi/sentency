@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isWordNotFound">
+  <div v-if="!isWordNotFound && !isPageLoading">
     <word-definition-view v-if="word" :word="word" />
 
     <h3 class="text-center">
@@ -25,7 +25,7 @@
       </snt-button>
     </div>
   </div>
-  <snt-alert v-else type="error"> No word has been added to the list yet </snt-alert>
+  <snt-alert v-if="isWordNotFound && !isPageLoading" type="error"> No word has been added to the list yet </snt-alert>
 </template>
 
 <script lang="ts" setup>
@@ -49,6 +49,7 @@ const router = useRouter();
 const api = useApi();
 
 const isLoading = ref<boolean>(false);
+const isPageLoading = ref<boolean>(false);
 const isWordNotFound = ref<boolean>(false);
 
 const sentenceForm = ref();
@@ -59,10 +60,14 @@ const word = ref<WordResponse>();
 
 const addSentence = async () => {
   isLoading.value = true;
-  await api.sentence.addSentence(sentenceRequest.value).then((resp) => {
-    isLoading.value = false;
-    router.push(`/user-word/${userWord.value?.id}`);
-  });
+  await api.sentence
+    .addSentence(sentenceRequest.value)
+    .then(() => {
+      router.push(`/user-word/${userWord.value?.id}`);
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
 };
 
 const translate = async () => {
@@ -104,8 +109,10 @@ const fetchUserWord = async () => {
 };
 
 onMounted(async () => {
+  isPageLoading.value = true;
   await fetchUserWord();
   await fetchWord();
+  isPageLoading.value = false;
 });
 </script>
 
