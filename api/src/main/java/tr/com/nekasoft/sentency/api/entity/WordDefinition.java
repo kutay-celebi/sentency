@@ -1,13 +1,8 @@
 package tr.com.nekasoft.sentency.api.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
-import tr.com.nekasoft.sentency.api.data.word.WordDefinitionResponse;
-
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,9 +11,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import tr.com.nekasoft.sentency.api.data.word.WordDefinitionResponse;
 
 @Setter
 @Getter
@@ -28,42 +27,43 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "snt_word_definition")
 public class WordDefinition extends BaseEntity {
-    private static final long serialVersionUID = -3642757426340941961L;
 
-    @Column(name = "definition")
-    private String definition;
+  private static final long serialVersionUID = -3642757426340941961L;
 
-    @Column(name = "definition_tr")
-    private String definitionTr;
+  @Column(name = "definition")
+  private String definition;
 
-    @Column(name = "part_of_speech")
-    private String partOfSpeech;
+  @Column(name = "definition_tr")
+  private String definitionTr;
 
-    @Column(name = "synonyms")
-    private String synonyms;
+  @Column(name = "part_of_speech")
+  private String partOfSpeech;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "word_id")
-    private Word word;
+  @Column(name = "synonyms")
+  private String synonyms;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "definition", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<WordDefinitionExamples> examples = new LinkedHashSet<>();
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "word_id")
+  private Word word;
 
-    public WordDefinitionResponse toResponse() {
-        var builder = WordDefinitionResponse.builder()
-                                            .id(id)
-                                            .definitionTr(definitionTr)
-                                            .partOfSpeech(partOfSpeech)
-                                            .definition(definition)
-                                            .examples(examples.parallelStream()
-                                                              .map(WordDefinitionExamples::getExample)
-                                                              .collect(Collectors.toSet()));
+  @Builder.Default
+  @OneToMany(mappedBy = "definition", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private Set<WordDefinitionExamples> examples = new LinkedHashSet<>();
 
-        if (synonyms != null) {
-            builder.synonyms(Set.of(synonyms.split(",")));
-        }
+  public WordDefinitionResponse toResponse() {
+    var builder = WordDefinitionResponse.builder()
+        .id(id)
+        .definitionTr(definitionTr)
+        .partOfSpeech(partOfSpeech)
+        .definition(definition)
+        .examples(examples.parallelStream()
+            .map(WordDefinitionExamples::getExample)
+            .collect(Collectors.toSet()));
 
-        return builder.build();
+    if (synonyms != null) {
+      builder.synonyms(Set.of(synonyms.split(",")));
     }
+
+    return builder.build();
+  }
 }

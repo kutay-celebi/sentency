@@ -2,11 +2,9 @@ package tr.com.nekasoft.sentency.api.service.impl;
 
 import java.util.Optional;
 import java.util.Set;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tr.com.nekasoft.sentency.api.data.PageResponse;
@@ -26,52 +24,53 @@ import tr.com.nekasoft.sentency.api.service.WordService;
 @ApplicationScoped
 public class WordServiceImpl implements WordService {
 
-    @Inject
-    @RestClient
-    protected WordsApiService wordsApiService;
+  @Inject
+  @RestClient
+  protected WordsApiService wordsApiService;
 
-    @Inject
-    protected WordRepository wordRepository;
+  @Inject
+  protected WordRepository wordRepository;
 
-    @Inject
-    protected GoogleTranslationExternalService googleService;
+  @Inject
+  protected GoogleTranslationExternalService googleService;
 
-    @Override
-    public PageResponse<WordResponse> query(WordPageQueryRequest request) {
-        return wordRepository.softPage(request).map(Word::toResponse);
+  @Override
+  public PageResponse<WordResponse> query(WordPageQueryRequest request) {
+    return wordRepository.softPage(request).map(Word::toResponse);
+  }
+
+  @Override
+  @Transactional
+  public WordResponse getWord(String word) {
+    Optional<Word> findWord =
+        wordRepository.softFind(WordFindRequest.builder().word(word).build()).firstResultOptional();
+
+    if (findWord.isPresent()) {
+      return findWord.get().toResponse();
     }
+    return fetchWordAndSave(word);
+  }
 
-    @Override
-    @Transactional
-    public WordResponse getWord(String word) {
-        Optional<Word> findWord =
-            wordRepository.softFind(WordFindRequest.builder().word(word).build()).firstResultOptional();
+  @Override
+  public WordResponse findById(String id) {
+    return wordRepository.softFindById(id).orElseThrow(ExceptionCode.DATA_NOT_FOUND::toException)
+        .toResponse();
+  }
 
-        if (findWord.isPresent()) {
-            return findWord.get().toResponse();
-        }
-        return fetchWordAndSave(word);
-    }
+  private WordResponse fetchWordAndSave(String word) {
 
-    @Override
-    public WordResponse findById(String id) {
-        return wordRepository.softFindById(id).orElseThrow(ExceptionCode.DATA_NOT_FOUND::toException).toResponse();
-    }
+    Word toBeSaved = Word.builder().word(word).build();
+    GetWordsResponse wordsApiResponse = wordsApiService.getWord(word);
 
-    private WordResponse fetchWordAndSave(String word) {
+    Set<WordDefinition> wordDefinitions = wordsApiResponse.toWordDefinitionEntity(toBeSaved);
+    wordDefinitions.forEach(def -> {
+      String translation = googleService.translate(def.getDefinition());
+      def.setDefinitionTr(translation);
+    });
+    toBeSaved.setDefinitions(wordDefinitions);
 
-        Word toBeSaved = Word.builder().word(word).build();
-        GetWordsResponse wordsApiResponse = wordsApiService.getWord(word);
-
-        Set<WordDefinition> wordDefinitions = wordsApiResponse.toWordDefinitionEntity(toBeSaved);
-        wordDefinitions.forEach(def -> {
-            String translation = googleService.translate(def.getDefinition());
-            def.setDefinitionTr(translation);
-        });
-        toBeSaved.setDefinitions(wordDefinitions);
-
-        wordRepository.persistAndFlush(toBeSaved);
-        return toBeSaved.toResponse();
-    }
+    wordRepository.persistAndFlush(toBeSaved);
+    return toBeSaved.toResponse();
+  }
 
 }

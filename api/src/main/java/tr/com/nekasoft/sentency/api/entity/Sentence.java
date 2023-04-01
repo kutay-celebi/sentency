@@ -6,7 +6,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,28 +21,29 @@ import tr.com.nekasoft.sentency.api.data.sentence.SentenceResponse;
 @Entity
 @Table(name = "snt_sentence")
 public class Sentence extends BaseEntity {
-    private static final long serialVersionUID = -8413799128537856385L;
 
-    @NotEmpty
-    @Column(name = "sentence")
-    private String sentence;
+  private static final long serialVersionUID = -8413799128537856385L;
 
-    @Column(name = "sentence_tr")
-    private String sentenceTr;
+  @NotEmpty
+  @Column(name = "sentence")
+  private String sentence;
 
-    @ManyToOne
-    @JoinColumn(name = "user_word_id")
-    private UserWord userWord;
+  @Column(name = "sentence_tr")
+  private String sentenceTr;
 
-    public SentenceResponse toPageResponse() {
-        return SentenceResponse.builder()
-                               .id(id)
-                               .sentence(sentence)
-                               .wordId(userWord.getWord().getId())
-                               .word(userWord.getWord().getWord())
-                               .difficulty(userWord.getDifficulty())
-                               .nextReview(userWord.getNextReview())
-                               .lastReview(userWord.getLastReview())
-                               .build();
-    }
+  @ManyToOne
+  @JoinColumn(name = "user_word_id")
+  private UserWord userWord;
+
+  public SentenceResponse toPageResponse() {
+    return SentenceResponse.builder()
+        .id(id)
+        .sentence(sentence)
+        .wordId(userWord.getWord().getId())
+        .word(userWord.getWord().getWord())
+        .difficulty(userWord.getDifficulty())
+        .nextReview(userWord.getNextReview())
+        .lastReview(userWord.getLastReview())
+        .build();
+  }
 }

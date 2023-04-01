@@ -15,30 +15,31 @@ import tr.com.nekasoft.sentency.api.data.PageQueryRequest;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WordPageQueryRequest extends PageQueryRequest {
-    private static final long serialVersionUID = 5409684864156839119L;
 
-    private String word;
+  private static final long serialVersionUID = 5409684864156839119L;
 
-    @Override
-    public String prepareQuery() {
-        StringBuilder query = new StringBuilder();
-        if (word != null) {
-            query.append("lower(word) like lower(:word)");
-        }
-        return query.toString();
+  private String word;
+
+  @Override
+  public String prepareQuery() {
+    StringBuilder query = new StringBuilder();
+    if (word != null) {
+      query.append("lower(word) like lower(:word)");
     }
+    return query.toString();
+  }
 
-    @Override
-    public Parameters prepareParameters() {
-        Parameters parameters = new Parameters();
-        if (word != null) {
-            parameters.and("word", "%" + word + "%");
-        }
-        return parameters;
+  @Override
+  public Parameters prepareParameters() {
+    Parameters parameters = new Parameters();
+    if (word != null) {
+      parameters.and("word", "%" + word + "%");
     }
+    return parameters;
+  }
 
-    @Override
-    public Sort prepareSorts() {
-        return Sort.empty();
-    }
+  @Override
+  public Sort prepareSorts() {
+    return Sort.empty();
+  }
 }

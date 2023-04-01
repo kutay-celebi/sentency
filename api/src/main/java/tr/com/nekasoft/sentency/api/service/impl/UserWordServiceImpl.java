@@ -1,16 +1,14 @@
 package tr.com.nekasoft.sentency.api.service.impl;
 
+import io.quarkus.panache.common.Parameters;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-
-import io.quarkus.panache.common.Parameters;
 import lombok.RequiredArgsConstructor;
 import tr.com.nekasoft.sentency.api.config.SentencyConfig;
 import tr.com.nekasoft.sentency.api.data.DefaultQueryRequest;
@@ -33,91 +31,93 @@ import tr.com.nekasoft.sentency.api.service.UserWordService;
 @RequiredArgsConstructor
 public class UserWordServiceImpl implements UserWordService {
 
-    private final SentencyConfig sentencyConfig;
-    private final UserWordRepository userWordRepository;
-    private final UserRepository userRepository;
-    private final WordRepository wordRepository;
+  private final SentencyConfig sentencyConfig;
+  private final UserWordRepository userWordRepository;
+  private final UserRepository userRepository;
+  private final WordRepository wordRepository;
 
-    @Transactional
-    @Override
-    public UserWordResponse addWord(UserWordRequest request) {
-        DefaultQueryRequest userWordQuery = DefaultQueryRequest.builder()
-                                                               .query("word.id = :wordId")
-                                                               .parameters(
-                                                                       Parameters.with("wordId", request.getWordId()))
-                                                               .build();
+  @Transactional
+  @Override
+  public UserWordResponse addWord(UserWordRequest request) {
+    DefaultQueryRequest userWordQuery = DefaultQueryRequest.builder()
+        .query("word.id = :wordId")
+        .parameters(
+            Parameters.with("wordId", request.getWordId()))
+        .build();
 
-        Optional<UserWord> userWord = userWordRepository.softFind(userWordQuery).firstResultOptional();
-        if (userWord.isEmpty()) {
-            User user = userRepository.softFindById(request.getUserId())
-                                      .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
-                                              Map.of("user-id", request.getUserId())));
-            Word word = wordRepository.softFindById(request.getWordId())
-                                      .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
-                                              Map.of("word-id", request.getWordId())));
+    Optional<UserWord> userWord = userWordRepository.softFind(userWordQuery).firstResultOptional();
+    if (userWord.isEmpty()) {
+      User user = userRepository.softFindById(request.getUserId())
+          .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
+              Map.of("user-id", request.getUserId())));
+      Word word = wordRepository.softFindById(request.getWordId())
+          .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
+              Map.of("word-id", request.getWordId())));
 
-            Duration toBeAdd = Duration.ofHours(sentencyConfig.review().medium().longValue());
-            Instant initialNextReview = Instant.now().plus(toBeAdd);
-            UserWord toBeSaved = UserWord.builder().nextReview(initialNextReview).user(user).word(word).build();
-            userWordRepository.persistAndFlush(toBeSaved);
-            return toBeSaved.toResponse();
-        }
-        return userWord.get().toResponse();
+      Duration toBeAdd = Duration.ofHours(sentencyConfig.review().medium().longValue());
+      Instant initialNextReview = Instant.now().plus(toBeAdd);
+      UserWord toBeSaved = UserWord.builder().nextReview(initialNextReview).user(user).word(word)
+          .build();
+      userWordRepository.persistAndFlush(toBeSaved);
+      return toBeSaved.toResponse();
+    }
+    return userWord.get().toResponse();
+  }
+
+  @Override
+  public UserWordResponse getNextReview(String userId) {
+    var sort = SortItem.builder().field("nextReview").direction("asc").build();
+    DefaultQueryRequest queryRequest = DefaultQueryRequest.builder()
+        .query("user.id = :userId")
+        .parameters(Parameters.with("userId", userId))
+        .sorts(Collections.singletonList(sort))
+        .build();
+    return userWordRepository.softFind(queryRequest)
+        .firstResultOptional()
+        .orElseThrow(() -> ExceptionCode.NO_WORDS_ADDED.toException(Map.of("user-id", userId)))
+        .toResponse();
+  }
+
+  @Transactional
+  @Override
+  public UserWordResponse adjustDifficulty(UserWordDifficultyRequest request) {
+    UserWord userWord = userWordRepository.softFindById(request.getUserWordId())
+        .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
+            Map.of("user-word-id", request.getUserWordId())));
+    BigDecimal hoursToBeAdded;
+    switch (request.getDifficulty()) {
+      case EASY:
+        hoursToBeAdded = sentencyConfig.review().easy();
+        break;
+      default:
+      case MEDIUM:
+        hoursToBeAdded = sentencyConfig.review().medium();
+        break;
+      case HARD:
+        hoursToBeAdded = sentencyConfig.review().hard();
+        break;
     }
 
-    @Override
-    public UserWordResponse getNextReview(String userId) {
-        var sort = SortItem.builder().field("nextReview").direction("asc").build();
-        DefaultQueryRequest queryRequest = DefaultQueryRequest.builder()
-                                                              .query("user.id = :userId")
-                                                              .parameters(Parameters.with("userId", userId))
-                                                              .sorts(Collections.singletonList(sort))
-                                                              .build();
-        return userWordRepository.softFind(queryRequest)
-                                 .firstResultOptional()
-                                 .orElseThrow(() -> ExceptionCode.NO_WORDS_ADDED.toException(Map.of("user-id", userId)))
-                                 .toResponse();
-    }
+    hoursToBeAdded = hoursToBeAdded.multiply(sentencyConfig.review().multiplier())
+        .multiply(BigDecimal.valueOf(userWord.getCount()));
 
-    @Transactional
-    @Override
-    public UserWordResponse adjustDifficulty(UserWordDifficultyRequest request) {
-        UserWord userWord = userWordRepository.softFindById(request.getUserWordId())
-                                              .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
-                                                      Map.of("user-word-id", request.getUserWordId())));
-        BigDecimal hoursToBeAdded;
-        switch (request.getDifficulty()) {
-            case EASY:
-                hoursToBeAdded = sentencyConfig.review().easy();
-                break;
-            default:
-            case MEDIUM:
-                hoursToBeAdded = sentencyConfig.review().medium();
-                break;
-            case HARD:
-                hoursToBeAdded = sentencyConfig.review().hard();
-                break;
-        }
+    userWord.setNextReview(
+        userWord.getNextReview().plus(Duration.ofHours(hoursToBeAdded.longValue())));
+    userWord.setDifficulty(request.getDifficulty());
+    userWordRepository.persistAndFlush(userWord);
+    return userWord.toResponse();
+  }
 
-        hoursToBeAdded = hoursToBeAdded.multiply(sentencyConfig.review().multiplier())
-                                       .multiply(BigDecimal.valueOf(userWord.getCount()));
+  @Override
+  public PageResponse<UserWordResponse> query(UserWordPageRequest request) {
+    return userWordRepository.softPage(request).map(UserWord::toResponse);
+  }
 
-        userWord.setNextReview(userWord.getNextReview().plus(Duration.ofHours(hoursToBeAdded.longValue())));
-        userWord.setDifficulty(request.getDifficulty());
-        userWordRepository.persistAndFlush(userWord);
-        return userWord.toResponse();
-    }
-
-    @Override
-    public PageResponse<UserWordResponse> query(UserWordPageRequest request) {
-        return userWordRepository.softPage(request).map(UserWord::toResponse);
-    }
-
-    @Override
-    public UserWordResponse findById(String id) {
-        return userWordRepository.softFindById(id)
-                                 .orElseThrow(
-                                         () -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-word-id", id)))
-                                 .toResponse();
-    }
+  @Override
+  public UserWordResponse findById(String id) {
+    return userWordRepository.softFindById(id)
+        .orElseThrow(
+            () -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-word-id", id)))
+        .toResponse();
+  }
 }

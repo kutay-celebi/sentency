@@ -12,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-
 import tr.com.nekasoft.sentency.api.data.sentence.SentencePageQueryRequest;
 import tr.com.nekasoft.sentency.api.data.sentence.SentenceRequest;
 import tr.com.nekasoft.sentency.api.service.SentenceService;
@@ -22,25 +21,25 @@ import tr.com.nekasoft.sentency.api.service.SentenceService;
 @Produces(APPLICATION_JSON)
 public class SentenceResource {
 
-    @Inject
-    SentenceService sentenceService;
+  @Inject
+  SentenceService sentenceService;
 
-    @POST
-    @Consumes(APPLICATION_JSON)
-    public Response save(@Valid SentenceRequest request) {
-        return Response.ok(sentenceService.save(request)).build();
-    }
+  @POST
+  @Consumes(APPLICATION_JSON)
+  public Response save(@Valid SentenceRequest request) {
+    return Response.ok(sentenceService.save(request)).build();
+  }
 
-    @GET
-    @Path("/translate")
-    public Response translate(@QueryParam("sentence") String sentence) {
-        return Response.ok(sentenceService.translate(sentence)).build();
-    }
+  @GET
+  @Path("/translate")
+  public Response translate(@QueryParam("sentence") String sentence) {
+    return Response.ok(sentenceService.translate(sentence)).build();
+  }
 
-    @POST
-    @Path("/query")
-    @Consumes(APPLICATION_JSON)
-    public Response query(@Valid SentencePageQueryRequest request) {
-        return Response.ok(sentenceService.query(request)).build();
-    }
+  @POST
+  @Path("/query")
+  @Consumes(APPLICATION_JSON)
+  public Response query(@Valid SentencePageQueryRequest request) {
+    return Response.ok(sentenceService.query(request)).build();
+  }
 }

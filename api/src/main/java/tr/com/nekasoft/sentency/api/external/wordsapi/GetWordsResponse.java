@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,35 +20,36 @@ import tr.com.nekasoft.sentency.api.entity.WordDefinitionExamples;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetWordsResponse implements Serializable {
-    private static final long serialVersionUID = 15371055057558225L;
 
-    private List<Definition> results;
-    private BigDecimal frequency;
+  private static final long serialVersionUID = 15371055057558225L;
 
-    public Set<WordDefinition> toWordDefinitionEntity(Word word) {
-        return results.stream().map(def -> {
-            WordDefinition wordDefinition = WordDefinition.builder()
-                                                          .word(word)
-                                                          .partOfSpeech(def.getPartOfSpeech())
-                                                          .definition(def.getDefinition())
-                                                          .build();
+  private List<Definition> results;
+  private BigDecimal frequency;
 
-            if (def.getSynonyms() != null) {
-                String synonyms = def.getSynonyms().parallelStream().collect(Collectors.joining(","));
-                wordDefinition.setSynonyms(synonyms);
-            }
+  public Set<WordDefinition> toWordDefinitionEntity(Word word) {
+    return results.stream().map(def -> {
+      WordDefinition wordDefinition = WordDefinition.builder()
+          .word(word)
+          .partOfSpeech(def.getPartOfSpeech())
+          .definition(def.getDefinition())
+          .build();
 
-            if (def.getExamples() != null) {
-                Set<WordDefinitionExamples> examples = def.getExamples()
-                                                          .parallelStream()
-                                                          .map(ex -> WordDefinitionExamples.builder()
-                                                                                           .example(ex)
-                                                                                           .definition(wordDefinition)
-                                                                                           .build())
-                                                          .collect(Collectors.toSet());
-                wordDefinition.setExamples(examples);
-            }
-            return wordDefinition;
-        }).collect(Collectors.toSet());
-    }
+      if (def.getSynonyms() != null) {
+        String synonyms = def.getSynonyms().parallelStream().collect(Collectors.joining(","));
+        wordDefinition.setSynonyms(synonyms);
+      }
+
+      if (def.getExamples() != null) {
+        Set<WordDefinitionExamples> examples = def.getExamples()
+            .parallelStream()
+            .map(ex -> WordDefinitionExamples.builder()
+                .example(ex)
+                .definition(wordDefinition)
+                .build())
+            .collect(Collectors.toSet());
+        wordDefinition.setExamples(examples);
+      }
+      return wordDefinition;
+    }).collect(Collectors.toSet());
+  }
 }

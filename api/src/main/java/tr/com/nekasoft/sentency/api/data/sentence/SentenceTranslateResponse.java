@@ -13,6 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SentenceTranslateResponse {
 
-    private String sentence;
-    private String translation;
+  private String sentence;
+  private String translation;
 }

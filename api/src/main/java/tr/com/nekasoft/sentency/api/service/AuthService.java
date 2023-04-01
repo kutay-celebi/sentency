@@ -6,9 +6,10 @@ import tr.com.nekasoft.sentency.api.data.auth.LoginRequest;
 import tr.com.nekasoft.sentency.api.data.auth.RegisterRequest;
 
 public interface AuthService {
-    void register(RegisterRequest request);
 
-    JwtResponse loginWithGoogle(GoogleIdToken idToken);
+  void register(RegisterRequest request);
 
-    JwtResponse login(LoginRequest request);
+  JwtResponse loginWithGoogle(GoogleIdToken idToken);
+
+  JwtResponse login(LoginRequest request);
 }

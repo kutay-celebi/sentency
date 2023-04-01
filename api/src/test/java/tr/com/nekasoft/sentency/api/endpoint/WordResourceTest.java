@@ -14,23 +14,24 @@ import tr.com.nekasoft.sentency.api.entity.Word;
 @QuarkusTest
 class WordResourceTest extends AbstractWordTestSuite {
 
-    @Nested
-    @TestHTTPEndpoint(WordResource.class)
-    class FindById {
+  @Nested
+  @TestHTTPEndpoint(WordResource.class)
+  class FindById {
 
-        @Test
-        void success() {
-            // given
-            Word expected = saveWord();
+    @Test
+    void success() {
+      // given
+      Word expected = saveWord();
 
-            // when
-            ValidatableResponse actual = given().when().get("/id/{id}", expected.getId()).then().log().all();
+      // when
+      ValidatableResponse actual = given().when().get("/id/{id}", expected.getId()).then().log()
+          .all();
 
-            // then
-            actual.statusCode(200);
-            actual.body("id", equalTo(expected.getId()));
+      // then
+      actual.statusCode(200);
+      actual.body("id", equalTo(expected.getId()));
 
-        }
     }
+  }
 
 }

@@ -1,17 +1,16 @@
 package tr.com.nekasoft.sentency.api.data;
 
-import java.io.Serializable;
-
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
+import java.io.Serializable;
 
 public interface QueryRequest extends Serializable {
 
-    public static String AND = " and ";
+  public static String AND = " and ";
 
-    String prepareQuery();
+  String prepareQuery();
 
-    Parameters prepareParameters();
+  Parameters prepareParameters();
 
-    Sort prepareSorts();
+  Sort prepareSorts();
 }

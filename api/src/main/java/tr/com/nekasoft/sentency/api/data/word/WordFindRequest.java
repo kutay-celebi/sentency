@@ -15,22 +15,23 @@ import tr.com.nekasoft.sentency.api.data.QueryRequest;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WordFindRequest implements QueryRequest {
-    private static final long serialVersionUID = 6706762938809640350L;
 
-    private String word;
+  private static final long serialVersionUID = 6706762938809640350L;
 
-    @Override
-    public String prepareQuery() {
-        return "word = :word";
-    }
+  private String word;
 
-    @Override
-    public Parameters prepareParameters() {
-        return Parameters.with("word", word);
-    }
+  @Override
+  public String prepareQuery() {
+    return "word = :word";
+  }
 
-    @Override
-    public Sort prepareSorts() {
-        return Sort.empty();
-    }
+  @Override
+  public Parameters prepareParameters() {
+    return Parameters.with("word", word);
+  }
+
+  @Override
+  public Sort prepareSorts() {
+    return Sort.empty();
+  }
 }
