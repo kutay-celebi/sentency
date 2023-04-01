@@ -23,7 +23,8 @@ public enum ExceptionCode {
     USER_USERNAME_EXIST("SNT-10102", "Username is already existing", Response.Status.INTERNAL_SERVER_ERROR),
     USER_ROLE_ASSIGNED("SNT-10103", "Role is already assigned", Response.Status.INTERNAL_SERVER_ERROR),
     // USER WORD
-    USER_WORD_ALREADY_EXISTS("SNT-10201", "Word is already added", Response.Status.INTERNAL_SERVER_ERROR);
+    USER_WORD_ALREADY_EXISTS("SNT-10201", "Word is already added", Response.Status.INTERNAL_SERVER_ERROR),
+    NO_WORDS_ADDED("SNT-10202", "No word has been added to the list yet", Response.Status.NOT_FOUND);
 
     private final String code;
     private final String message;

@@ -43,18 +43,18 @@ public class UserWordServiceImpl implements UserWordService {
     public UserWordResponse addWord(UserWordRequest request) {
         DefaultQueryRequest userWordQuery = DefaultQueryRequest.builder()
                                                                .query("word.id = :wordId")
-                                                               .parameters(Parameters.with("wordId",
-                                                                                           request.getWordId()))
+                                                               .parameters(
+                                                                       Parameters.with("wordId", request.getWordId()))
                                                                .build();
 
         Optional<UserWord> userWord = userWordRepository.softFind(userWordQuery).firstResultOptional();
         if (userWord.isEmpty()) {
             User user = userRepository.softFindById(request.getUserId())
-                                      .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-id",
-                                                                                                         request.getUserId())));
+                                      .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
+                                              Map.of("user-id", request.getUserId())));
             Word word = wordRepository.softFindById(request.getWordId())
-                                      .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("word-id",
-                                                                                                         request.getWordId())));
+                                      .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
+                                              Map.of("word-id", request.getWordId())));
 
             Duration toBeAdd = Duration.ofHours(sentencyConfig.review().medium().longValue());
             Instant initialNextReview = Instant.now().plus(toBeAdd);
@@ -75,7 +75,7 @@ public class UserWordServiceImpl implements UserWordService {
                                                               .build();
         return userWordRepository.softFind(queryRequest)
                                  .firstResultOptional()
-                                 .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-id", userId)))
+                                 .orElseThrow(() -> ExceptionCode.NO_WORDS_ADDED.toException(Map.of("user-id", userId)))
                                  .toResponse();
     }
 
@@ -83,21 +83,20 @@ public class UserWordServiceImpl implements UserWordService {
     @Override
     public UserWordResponse adjustDifficulty(UserWordDifficultyRequest request) {
         UserWord userWord = userWordRepository.softFindById(request.getUserWordId())
-                                              .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of(
-                                                  "user-word-id",
-                                                  request.getUserWordId())));
+                                              .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
+                                                      Map.of("user-word-id", request.getUserWordId())));
         BigDecimal hoursToBeAdded;
         switch (request.getDifficulty()) {
-        case EASY:
-            hoursToBeAdded = sentencyConfig.review().easy();
-            break;
-        default:
-        case MEDIUM:
-            hoursToBeAdded = sentencyConfig.review().medium();
-            break;
-        case HARD:
-            hoursToBeAdded = sentencyConfig.review().hard();
-            break;
+            case EASY:
+                hoursToBeAdded = sentencyConfig.review().easy();
+                break;
+            default:
+            case MEDIUM:
+                hoursToBeAdded = sentencyConfig.review().medium();
+                break;
+            case HARD:
+                hoursToBeAdded = sentencyConfig.review().hard();
+                break;
         }
 
         hoursToBeAdded = hoursToBeAdded.multiply(sentencyConfig.review().multiplier())
@@ -117,8 +116,8 @@ public class UserWordServiceImpl implements UserWordService {
     @Override
     public UserWordResponse findById(String id) {
         return userWordRepository.softFindById(id)
-                                 .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-word-id",
-                                                                                                    id)))
+                                 .orElseThrow(
+                                         () -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-word-id", id)))
                                  .toResponse();
     }
 }
