@@ -1,18 +1,5 @@
 package tr.com.nekasoft.sentency.api.endpoint;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static tr.com.nekasoft.sentency.api.data.userword.Difficulty.HARD;
-
-import java.time.Duration;
-import java.time.Instant;
-
-import javax.inject.Inject;
-
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -33,6 +20,14 @@ import tr.com.nekasoft.sentency.api.entity.UserWord;
 import tr.com.nekasoft.sentency.api.entity.Word;
 import tr.com.nekasoft.sentency.api.exception.ExceptionCode;
 import tr.com.nekasoft.sentency.api.repository.UserWordRepository;
+
+import javax.inject.Inject;
+import java.time.Duration;
+import java.time.Instant;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+import static tr.com.nekasoft.sentency.api.data.userword.Difficulty.HARD;
 
 @QuarkusTest
 public class UserWordResourceTest extends AbstractWordTestSuite {
@@ -55,7 +50,7 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
 
             // then
             actual.statusCode(404);
-            actual.body("code", equalTo(ExceptionCode.DATA_NOT_FOUND.getCode()));
+            actual.body("code", equalTo(ExceptionCode.NO_WORDS_ADDED.getCode()));
             actual.body("args.user-id", equalTo("unknown"));
 
         }
@@ -208,7 +203,7 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
             Word word = saveWord();
             UserWordRequest payload = UserWordRequest.builder().userId(user.getId()).wordId(word.getId()).build();
             Instant expectedNextReview =
-                Instant.now().plus(Duration.ofHours(sentencyConfig.review().medium().longValue()));
+                    Instant.now().plus(Duration.ofHours(sentencyConfig.review().medium().longValue()));
 
             // when
             ValidatableResponse actual = given().contentType(ContentType.JSON).body(payload).post().then().log().all();
@@ -237,11 +232,11 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
 
             // given
             UserWordPageRequest payload =
-                UserWordPageRequest.builder().userId(StringQueryItem.builder().value(user.getId()).build()).build();
+                    UserWordPageRequest.builder().userId(StringQueryItem.builder().value(user.getId()).build()).build();
 
             // when
             ValidatableResponse actual =
-                given().contentType(ContentType.JSON).body(payload).post("/query").then().log().all();
+                    given().contentType(ContentType.JSON).body(payload).post("/query").then().log().all();
 
             // then
             actual.statusCode(200);
@@ -265,11 +260,11 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
             UserWord userWord = saveUserWord(user, word);
 
             UserWordDifficultyRequest payload =
-                UserWordDifficultyRequest.builder().difficulty(HARD).userWordId(userWord.getId()).build();
+                    UserWordDifficultyRequest.builder().difficulty(HARD).userWordId(userWord.getId()).build();
 
             // when
             ValidatableResponse actual =
-                given().contentType(ContentType.JSON).body(payload).put("/difficulty").then().log().all();
+                    given().contentType(ContentType.JSON).body(payload).put("/difficulty").then().log().all();
 
             // then
             actual.statusCode(200);
@@ -287,11 +282,11 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
             UserWord userWord = saveUserWord(user, word);
 
             UserWordDifficultyRequest payload =
-                UserWordDifficultyRequest.builder().difficulty(HARD).userWordId(userWord.getId()).build();
+                    UserWordDifficultyRequest.builder().difficulty(HARD).userWordId(userWord.getId()).build();
 
             // when
             ValidatableResponse actual =
-                given().contentType(ContentType.JSON).body(payload).put("/difficulty").then().log().all();
+                    given().contentType(ContentType.JSON).body(payload).put("/difficulty").then().log().all();
 
             // then
             actual.statusCode(200);
@@ -304,11 +299,11 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
             // given
 
             UserWordDifficultyRequest payload =
-                UserWordDifficultyRequest.builder().difficulty(HARD).userWordId("unknown").build();
+                    UserWordDifficultyRequest.builder().difficulty(HARD).userWordId("unknown").build();
 
             // when
             ValidatableResponse actual =
-                given().contentType(ContentType.JSON).body(payload).put("/difficulty").then().log().all();
+                    given().contentType(ContentType.JSON).body(payload).put("/difficulty").then().log().all();
 
             // then
             actual.statusCode(404);
