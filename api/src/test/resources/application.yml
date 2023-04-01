@@ -2,8 +2,6 @@ quarkus:
   rest-client:
     words-api:
       uri: dummy
-  log:
-    level: DEBUG
   smallrye-jwt:
     enabled: false
   datasource:
