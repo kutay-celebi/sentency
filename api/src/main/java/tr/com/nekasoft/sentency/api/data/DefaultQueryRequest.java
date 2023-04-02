@@ -43,6 +43,11 @@ public class DefaultQueryRequest implements QueryRequest {
   @Override
   public Sort prepareSorts() {
     Sort sort = Sort.empty();
+
+    if (sorts == null) {
+      return sort;
+    }
+    
     sorts.forEach(entry -> sort.and(entry.getField(), entry.toDirection()));
     return sort;
   }
