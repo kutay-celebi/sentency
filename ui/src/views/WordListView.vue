@@ -8,6 +8,7 @@ import { PageResponse, UserWordPageRequest, UserWordResponse } from "@/module/se
 import { useDateUtility } from "@/composable/date-utility";
 import SntPagination from "@/components/core/SntPagination.vue";
 import SntAlert from "@/components/core/SntAlert.vue";
+import SntButton from "@/components/core/SntButton.vue";
 
 const api = useApi();
 const authStore = useAuthStore();
@@ -34,12 +35,31 @@ const query = ref<UserWordPageRequest>({
 watch(query.value, () => {
   fetchUserWords();
 });
+
 const fetchUserWords = async () => {
   isLoading.value = true;
   await api.userWord
     .query(query.value)
     .then((resp) => {
+      resp.data.content.forEach((word) => (word.showContext = false));
       words.value = resp.data;
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
+};
+
+const onClickWord = (word: UserWordResponse) => {
+  word.showContext = !word.showContext;
+};
+
+const removeReviewList = async (word: UserWordResponse) => {
+  isLoading.value = true;
+  await api.userWord
+    .removeFromList(word.id)
+    .then((resp) => {
+      word.showContext = false;
+      word.isActive = resp.data.isActive;
     })
     .finally(() => {
       isLoading.value = false;
@@ -54,16 +74,31 @@ onBeforeMount(() => {
 <template>
   <div v-if="words">
     <snt-pagination v-model="query.page" :total="words.totalPage" />
-    <snt-list>
-      <snt-list-item v-for="word in words.content" :key="word.id">
-        <div>{{ word.word }}</div>
-        <div>
-          <span class="text-bold">Last Review:</span>
-          <span style="margin-left: 0.5rem">
-            {{ word.lastReview ? dateUtility.dateLongFormat(word.lastReview) : "-" }}
-          </span>
+    <snt-list ref="listRef">
+      <snt-list-item v-for="word in words.content" :key="word.id" @click="() => onClickWord(word)">
+        <div v-if="word.showContext">
+          <snt-button color="error" :loading="isLoading" @click.stop="() => removeReviewList(word)">
+            Remove From Review List
+          </snt-button>
         </div>
-        <span class="word-count"> Count: {{ word.count }} </span>
+        <div v-else>
+          <div>{{ word.word }}</div>
+          <div style="display: flex">
+            <div>
+              <span class="text-bold">Last Review:</span>
+              <span style="margin-left: 0.5rem">
+                {{ word.lastReview ? dateUtility.dateLongFormat(word.lastReview) : "-" }}
+              </span>
+            </div>
+            <div style="margin-left: 1rem">
+              <span class="text-bold">Active:</span>
+              <span style="margin-left: 0.5rem">
+                {{ word.isActive ? "Active" : "Inactive " }}
+              </span>
+            </div>
+          </div>
+          <span class="word-count"> Count: {{ word.count }} </span>
+        </div>
       </snt-list-item>
     </snt-list>
   </div>

@@ -41,6 +41,9 @@ export interface UserWordResponse {
   lastReview: Date;
   difficulty?: Difficulty;
   count: number;
+  isActive: boolean;
+  // additional
+  showContext?: boolean;
 }
 
 export interface SentenceRequest {

@@ -8,6 +8,13 @@ import {
   UserWordResponse,
 } from "@/module/service";
 
+export const removeFromList = (id: string): Promise<AxiosResponse<UserWordResponse>> => {
+  return axiosInstance({
+    url: `/user-word/${id}`,
+    method: "delete",
+  });
+};
+
 export const fetchNextReview = (userWordId: string): Promise<AxiosResponse<UserWordResponse>> => {
   return axiosInstance({
     url: `/user-word/${userWordId}/next-review`,
