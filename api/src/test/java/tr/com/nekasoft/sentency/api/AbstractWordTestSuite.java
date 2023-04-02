@@ -23,7 +23,11 @@ public abstract class AbstractWordTestSuite extends AbstractUserTestSuite {
   }
 
   protected UserWord saveUserWord(User user, Word word) {
-    UserWord toBeSaved = UserWord.builder().word(word).user(user).nextReview(Instant.now()).build();
+    return saveUserWord(user, word, true);
+  }
+
+  protected UserWord saveUserWord(User user, Word word, Boolean isActive) {
+    UserWord toBeSaved = UserWord.builder().word(word).user(user).isActive(isActive).nextReview(Instant.now()).build();
     userWordRepository.persistAndFlush(toBeSaved);
     return toBeSaved;
   }

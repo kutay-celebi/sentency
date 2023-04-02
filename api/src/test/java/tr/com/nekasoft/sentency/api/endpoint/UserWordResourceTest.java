@@ -77,6 +77,21 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
       actual.statusCode(200);
       actual.body("id", equalTo(expected.getId()));
     }
+
+    @Test
+    void shouldBeFilteredByIsActiveTrue() {
+      // given
+      User user = saveUser();
+      Word word = saveWord();
+      UserWord userWord = saveUserWord(user, word, false);
+
+      // when
+      ValidatableResponse actual = given().when().get("/{user-id}/next-review", user.getId()).then().log().all();
+
+      // then
+      actual.statusCode(404);
+
+    }
   }
 
   @Nested

@@ -64,8 +64,8 @@ public class UserWordServiceImpl implements UserWordService {
   public UserWordResponse getNextReview(String userId) {
     var sort = SortItem.builder().field("nextReview").direction("asc").build();
     DefaultQueryRequest queryRequest = DefaultQueryRequest.builder()
-        .query("user.id = :userId")
-        .parameters(Parameters.with("userId", userId))
+        .query("user.id = :userId and isActive = :isActive")
+        .parameters(Parameters.with("userId", userId).and("isActive", true))
         .sorts(Collections.singletonList(sort))
         .build();
     return userWordRepository.softFind(queryRequest)
