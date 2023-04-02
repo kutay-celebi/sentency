@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
+    id 'jacoco'
 }
 
 repositories {
@@ -62,6 +63,14 @@ test {
     systemProperty "WORDS_API_RAPID_API_URI", "dummy"
     systemProperty "WORDS_API_RAPID_API_HOST", "dummy"
     systemProperty "WORDS_API_RAPID_API_KEY", "dummy"
+
+
+    finalizedBy jacocoTestReport
+    jacoco {
+        excludeClassLoaders = ["*QuarkusClassLoader"]
+        destinationFile = layout.buildDirectory.file("jacoco-quarkus.exec").get().asFile
+    }
+    jacocoTestReport.enabled = false
 }
 compileJava {
     options.encoding = 'UTF-8'
