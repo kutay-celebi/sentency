@@ -30,7 +30,7 @@ quarkus:
     http:
       cors: false
     smallrye-jwt:
-      enabled: false
+      enabled: true
     flyway:
       migrate-at-start: true
     datasource:

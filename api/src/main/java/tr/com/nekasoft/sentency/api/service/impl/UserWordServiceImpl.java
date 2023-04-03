@@ -39,16 +39,19 @@ public class UserWordServiceImpl implements UserWordService {
   @Transactional
   @Override
   public UserWordResponse addWord(UserWordRequest request) {
-    DefaultQueryRequest userWordQuery = DefaultQueryRequest.builder()
+    DefaultQueryRequest userWordQuery = DefaultQueryRequest
+        .builder()
         .query("word.id = :wordId")
         .parameters(Parameters.with("wordId", request.getWordId()))
         .build();
 
     Optional<UserWord> userWord = userWordRepository.softFind(userWordQuery).firstResultOptional();
     if (userWord.isEmpty()) {
-      User user = userRepository.softFindById(request.getUserId())
+      User user = userRepository
+          .softFindById(request.getUserId())
           .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-id", request.getUserId())));
-      Word word = wordRepository.softFindById(request.getWordId())
+      Word word = wordRepository
+          .softFindById(request.getWordId())
           .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("word-id", request.getWordId())));
 
       Duration toBeAdd = Duration.ofHours(sentencyConfig.review().medium().longValue());
@@ -56,19 +59,25 @@ public class UserWordServiceImpl implements UserWordService {
       UserWord toBeSaved = UserWord.builder().nextReview(initialNextReview).user(user).word(word).build();
       userWordRepository.persistAndFlush(toBeSaved);
       return toBeSaved.toResponse();
+    } else {
+      userWord.get().setIsActive(Boolean.TRUE);
+      userWordRepository.persistAndFlush(userWord.get());
     }
+
     return userWord.get().toResponse();
   }
 
   @Override
   public UserWordResponse getNextReview(String userId) {
     var sort = SortItem.builder().field("nextReview").direction("asc").build();
-    DefaultQueryRequest queryRequest = DefaultQueryRequest.builder()
+    DefaultQueryRequest queryRequest = DefaultQueryRequest
+        .builder()
         .query("user.id = :userId and isActive = :isActive")
         .parameters(Parameters.with("userId", userId).and("isActive", true))
         .sorts(Collections.singletonList(sort))
         .build();
-    return userWordRepository.softFind(queryRequest)
+    return userWordRepository
+        .softFind(queryRequest)
         .firstResultOptional()
         .orElseThrow(() -> ExceptionCode.NO_WORDS_ADDED.toException(Map.of("user-id", userId)))
         .toResponse();
@@ -77,7 +86,8 @@ public class UserWordServiceImpl implements UserWordService {
   @Transactional
   @Override
   public UserWordResponse adjustDifficulty(UserWordDifficultyRequest request) {
-    UserWord userWord = userWordRepository.softFindById(request.getUserWordId())
+    UserWord userWord = userWordRepository
+        .softFindById(request.getUserWordId())
         .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-word-id", request.getUserWordId())));
     BigDecimal hoursToBeAdded;
     switch (request.getDifficulty()) {
@@ -93,7 +103,8 @@ public class UserWordServiceImpl implements UserWordService {
         break;
     }
 
-    hoursToBeAdded = hoursToBeAdded.multiply(sentencyConfig.review().multiplier())
+    hoursToBeAdded = hoursToBeAdded
+        .multiply(sentencyConfig.review().multiplier())
         .multiply(BigDecimal.valueOf(userWord.getCount()));
 
     userWord.setNextReview(userWord.getNextReview().plus(Duration.ofHours(hoursToBeAdded.longValue())));
@@ -109,7 +120,8 @@ public class UserWordServiceImpl implements UserWordService {
 
   @Override
   public UserWordResponse findById(String id) {
-    return userWordRepository.softFindById(id)
+    return userWordRepository
+        .softFindById(id)
         .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of("user-word-id", id)))
         .toResponse();
   }
@@ -117,7 +129,8 @@ public class UserWordServiceImpl implements UserWordService {
   @Override
   @Transactional
   public UserWordResponse removeReviewList(String userWordId) {
-    UserWord userWord = userWordRepository.softFindById(userWordId)
+    UserWord userWord = userWordRepository
+        .softFindById(userWordId)
         .orElseThrow(ExceptionCode.DATA_NOT_FOUND::toException);
     userWord.setIsActive(Boolean.FALSE);
     userWordRepository.persistAndFlush(userWord);

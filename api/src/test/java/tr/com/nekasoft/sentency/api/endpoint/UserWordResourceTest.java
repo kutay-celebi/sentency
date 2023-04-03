@@ -227,6 +227,23 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
 
     }
 
+    @Test
+    void existingWordShouldBeConvertedToActive() {
+      // given
+      User user = saveUser();
+      Word word = saveWord();
+      saveUserWord(user, word, Boolean.FALSE);
+      UserWordRequest payload = UserWordRequest.builder().userId(user.getId()).wordId(word.getId()).build();
+
+      // when
+      ValidatableResponse actual = given().contentType(ContentType.JSON).body(payload).post().then().log().all();
+
+      // then
+      actual.statusCode(200);
+      actual.body("isActive", equalTo(true));
+
+    }
+
   }
 
   @Nested
@@ -242,12 +259,14 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
       userWordRepository.persistAndFlush(userWord);
 
       // given
-      UserWordPageRequest payload = UserWordPageRequest.builder()
+      UserWordPageRequest payload = UserWordPageRequest
+          .builder()
           .userId(StringQueryItem.builder().value(user.getId()).build())
           .build();
 
       // when
-      ValidatableResponse actual = given().contentType(ContentType.JSON)
+      ValidatableResponse actual = given()
+          .contentType(ContentType.JSON)
           .body(payload)
           .post("/query")
           .then()
@@ -276,13 +295,15 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
       Word word = saveWord();
       UserWord userWord = saveUserWord(user, word);
 
-      UserWordDifficultyRequest payload = UserWordDifficultyRequest.builder()
+      UserWordDifficultyRequest payload = UserWordDifficultyRequest
+          .builder()
           .difficulty(HARD)
           .userWordId(userWord.getId())
           .build();
 
       // when
-      ValidatableResponse actual = given().contentType(ContentType.JSON)
+      ValidatableResponse actual = given()
+          .contentType(ContentType.JSON)
           .body(payload)
           .put("/difficulty")
           .then()
@@ -304,13 +325,15 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
       Word word = saveWord();
       UserWord userWord = saveUserWord(user, word);
 
-      UserWordDifficultyRequest payload = UserWordDifficultyRequest.builder()
+      UserWordDifficultyRequest payload = UserWordDifficultyRequest
+          .builder()
           .difficulty(HARD)
           .userWordId(userWord.getId())
           .build();
 
       // when
-      ValidatableResponse actual = given().contentType(ContentType.JSON)
+      ValidatableResponse actual = given()
+          .contentType(ContentType.JSON)
           .body(payload)
           .put("/difficulty")
           .then()
@@ -327,13 +350,15 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
     void unknownId() {
       // given
 
-      UserWordDifficultyRequest payload = UserWordDifficultyRequest.builder()
+      UserWordDifficultyRequest payload = UserWordDifficultyRequest
+          .builder()
           .difficulty(HARD)
           .userWordId("unknown")
           .build();
 
       // when
-      ValidatableResponse actual = given().contentType(ContentType.JSON)
+      ValidatableResponse actual = given()
+          .contentType(ContentType.JSON)
           .body(payload)
           .put("/difficulty")
           .then()
@@ -360,7 +385,8 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
       UserWord userWord = saveUserWord(user, word);
 
       // when
-      ValidatableResponse actual = given().pathParam("user-word-id", userWord.getId())
+      ValidatableResponse actual = given()
+          .pathParam("user-word-id", userWord.getId())
           .delete("/{user-word-id}")
           .then()
           .log()
@@ -380,7 +406,8 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
       // given
 
       // when
-      ValidatableResponse actual = given().pathParam("user-word-id", "unknown")
+      ValidatableResponse actual = given()
+          .pathParam("user-word-id", "unknown")
           .delete("/{user-word-id}")
           .then()
           .log()
