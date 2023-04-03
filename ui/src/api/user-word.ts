@@ -15,9 +15,9 @@ export const removeFromList = (id: string): Promise<AxiosResponse<UserWordRespon
   });
 };
 
-export const fetchNextReview = (userWordId: string): Promise<AxiosResponse<UserWordResponse>> => {
+export const fetchNextReview = (userId: string): Promise<AxiosResponse<UserWordResponse>> => {
   return axiosInstance({
-    url: `/user-word/${userWordId}/next-review`,
+    url: `/user-word/${userId}/next-review`,
   });
 };
 

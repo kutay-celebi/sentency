@@ -2,7 +2,7 @@
 import SntInput from "@/components/core/SntInput.vue";
 import { ref } from "vue";
 import SntButton from "@/components/core/SntButton.vue";
-import type { UserWordRequest, WordResponse } from "@/module/service";
+import type { UserWordRequest, UserWordResponse, WordResponse } from "@/module/service";
 import WordDefinitionView from "@/components/word/WordDefinitionView.vue";
 import RiSearch2Line from "~icons/ri/search-2-line";
 import RiAddCircleLine from "~icons/ri/add-circle-line";
@@ -13,14 +13,16 @@ import SntStatus from "@/components/core/SntStatus.vue";
 import { useRouter } from "vue-router";
 import useApi from "@/api";
 
+const router = useRouter();
+const api = useApi();
+const auth = useAuthStore();
+
 const loading = ref(false);
+const showStatus = ref(false);
+
+const userWordResponse = ref<UserWordResponse | undefined>(undefined);
 const searchWordModel = ref();
 const searchWordResponse = ref<WordResponse>();
-const auth = useAuthStore();
-const showStatus = ref(false);
-const router = useRouter();
-
-const api = useApi();
 
 const closeSuccess = () => {
   showStatus.value = false;
@@ -29,7 +31,7 @@ const closeSuccess = () => {
 };
 
 const createSentence = () => {
-  router.push({ name: "sentence", params: { wordid: searchWordResponse.value?.id } });
+  router.push({ name: "sentence", params: { wordid: userWordResponse.value?.id } });
 };
 const addToList = async () => {
   loading.value = true;
@@ -38,8 +40,9 @@ const addToList = async () => {
       wordId: searchWordResponse.value?.id,
       userId: auth.userId,
     } as UserWordRequest)
-    .then(() => {
+    .then((resp) => {
       showStatus.value = true;
+      userWordResponse.value = resp.data;
     })
     .finally(() => {
       loading.value = false;

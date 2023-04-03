@@ -93,24 +93,39 @@ const fetchWord = async () => {
   });
 };
 
-const fetchUserWord = async () => {
+const fetchNextReview = async () => {
   isWordNotFound.value = false;
-  await api.userWord
-    .fetchNextReview((route.params.wordid as string) || auth.userId)
-    .then((response) => {
-      userWord.value = response.data;
-      sentenceRequest.value.wordId = userWord.value?.wordId;
-    })
-    .catch((err: AxiosError) => {
-      if (err.status === 404) {
-        isWordNotFound.value = true;
-      }
-    });
+
+  if (route.params.wordid) {
+    await api.userWord
+      .fetchUserWord(route.params.wordid as string)
+      .then((response) => {
+        userWord.value = response.data;
+        sentenceRequest.value.wordId = userWord.value?.wordId;
+      })
+      .catch((err: AxiosError) => {
+        if (err.status === 404) {
+          isWordNotFound.value = true;
+        }
+      });
+  } else {
+    await api.userWord
+      .fetchNextReview(auth.userId)
+      .then((response) => {
+        userWord.value = response.data;
+        sentenceRequest.value.wordId = userWord.value?.wordId;
+      })
+      .catch((err: AxiosError) => {
+        if (err.status === 404) {
+          isWordNotFound.value = true;
+        }
+      });
+  }
 };
 
 onMounted(async () => {
   isPageLoading.value = true;
-  await fetchUserWord();
+  await fetchNextReview();
   await fetchWord();
   isPageLoading.value = false;
 });
