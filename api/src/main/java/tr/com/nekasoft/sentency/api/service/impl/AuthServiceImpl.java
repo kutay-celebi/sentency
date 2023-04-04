@@ -28,11 +28,13 @@ public class AuthServiceImpl implements AuthService {
   @Transactional
   @Override
   public void register(RegisterRequest request) {
-    Optional<User> user = userRepository.softFind(DefaultQueryRequest.builder()
-        .query("username = :username")
-        .parameters(Parameters.with("username",
-            request.getUsername()))
-        .build()).firstResultOptional();
+    Optional<User> user = userRepository
+        .softFind(DefaultQueryRequest
+            .builder()
+            .query("username = :username")
+            .parameters(Parameters.with("username", request.getUsername()))
+            .build())
+        .firstResultOptional();
     if (user.isPresent()) {
       throw ExceptionCode.USER_USERNAME_EXIST.toException();
     }
@@ -46,34 +48,30 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public JwtResponse loginWithGoogle(GoogleIdToken idToken) {
     String pass = BCrypt.hashpw(BCrypt.gensalt(), BCrypt.gensalt(10));
-    User user = userRepository.softFind(DefaultQueryRequest.builder()
-        .query("username = :username")
-        .parameters(Parameters.with("username",
-            idToken.getPayload()
-                .getEmail()))
-        .build()).firstResultOptional().orElseGet(() -> {
-      User toBeSaved = User.builder().username(idToken.getPayload().getEmail()).password(pass)
-          .build();
-      userRepository.persistAndFlush(toBeSaved);
-      return toBeSaved;
-    });
+    User user = userRepository
+        .softFind(DefaultQueryRequest
+            .builder()
+            .query("username = :username")
+            .parameters(Parameters.with("username", idToken.getPayload().getEmail()))
+            .build())
+        .firstResultOptional()
+        .orElseGet(() -> {
+          User toBeSaved = User.builder().username(idToken.getPayload().getEmail()).password(pass).build();
+          userRepository.persistAndFlush(toBeSaved);
+          return toBeSaved;
+        });
 
-    String token = Jwt.subject(user.getUsername())
-        .groups(user.getRole().name())
-        .issuedAt(Instant.now())
-        .expiresIn(Duration.ofHours(12))
-        .jws()
-        .sign();
-    return JwtResponse.builder().userId(user.getId()).role(user.getRole()).token(token).build();
+    return JwtResponse.builder().userId(user.getId()).role(user.getRole()).token(generateJwt(user)).build();
 
   }
 
   @Override
   public JwtResponse login(LoginRequest request) {
-    User user = userRepository.softFind(DefaultQueryRequest.builder()
+    User user = userRepository
+        .softFind(DefaultQueryRequest
+            .builder()
             .query("username = :username")
-            .parameters(Parameters.with("username",
-                request.getUsername()))
+            .parameters(Parameters.with("username", request.getUsername()))
             .build())
         .firstResultOptional()
         .orElseThrow(ExceptionCode.BAD_CREDENTIAL::toException);
@@ -82,14 +80,17 @@ public class AuthServiceImpl implements AuthService {
       throw ExceptionCode.BAD_CREDENTIAL.toException();
     }
 
-    String token = Jwt.subject(user.getUsername())
+    return JwtResponse.builder().userId(user.getId()).role(user.getRole()).token(generateJwt(user)).build();
+  }
+
+  private String generateJwt(User user) {
+    return Jwt
+        .subject(user.getUsername())
         .groups(user.getRole().name())
         .issuedAt(Instant.now())
-        .expiresIn(Duration.ofHours(12))
+        .expiresIn(Duration.ofSeconds(3600))
         .jws()
         .sign();
-    return JwtResponse.builder().userId(user.getId()).role(user.getRole()).token(token).build();
-
   }
 
 }

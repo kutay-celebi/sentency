@@ -1,13 +1,6 @@
 package tr.com.nekasoft.sentency.api.endpoint;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.gson.GsonFactory;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.List;
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
@@ -20,9 +13,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tr.com.nekasoft.sentency.api.data.auth.LoginRequest;
 import tr.com.nekasoft.sentency.api.data.auth.RegisterRequest;
+import tr.com.nekasoft.sentency.api.external.google.GoogleOAuthExternal;
 import tr.com.nekasoft.sentency.api.service.AuthService;
 
 @Resource
@@ -31,11 +24,10 @@ import tr.com.nekasoft.sentency.api.service.AuthService;
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuthResource {
 
-  @ConfigProperty(name = "google.client-id")
-  protected String googleClientId;
-
   @Inject
   AuthService authService;
+  @Inject
+  GoogleOAuthExternal googleOAuthExternal;
 
   @POST
   @Path("/register")
@@ -54,13 +46,8 @@ public class AuthResource {
   @GET
   @Path("/login/google")
   @PermitAll
-  public Response googleLogin(@QueryParam("auth-code") String token)
-      throws GeneralSecurityException, IOException {
-    List<String> clientIds = Collections.singletonList(googleClientId);
-    var verifier = new GoogleIdTokenVerifier.Builder(GoogleNetHttpTransport.newTrustedTransport(),
-        GsonFactory.getDefaultInstance()).setAudience(clientIds)
-        .build();
-    GoogleIdToken idToken = verifier.verify(token);
+  public Response googleLogin(@QueryParam("auth-code") String token) {
+    GoogleIdToken idToken = googleOAuthExternal.verifyToken(token);
     return Response.ok(authService.loginWithGoogle(idToken)).build();
   }
 

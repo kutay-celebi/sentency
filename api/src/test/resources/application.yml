@@ -3,7 +3,7 @@ quarkus:
     words-api:
       uri: dummy
   smallrye-jwt:
-    enabled: false
+    enabled: true
   datasource:
     devservices:
       enabled: true
@@ -17,6 +17,19 @@ quarkus:
       generation: none
     scripts:
       generation: none
+
+
+smallrye:
+  jwt:
+    sign:
+      key:
+        location: privateKey.pem
+mp:
+  jwt:
+    verify:
+      publickey:
+        location: publicKey.pem
+      issuer: https://test.com
 google:
   project-id: dummy
   client-id: dummy
