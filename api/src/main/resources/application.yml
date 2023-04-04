@@ -28,6 +28,8 @@ quarkus:
           level: DEBUG
       level: INFO
     http:
+      access-log:
+        enabled: true
       cors: false
     smallrye-jwt:
       enabled: true

@@ -23,12 +23,12 @@ smallrye:
   jwt:
     sign:
       key:
-        location: privateKey.pem
+        location: private.pem
 mp:
   jwt:
     verify:
       publickey:
-        location: publicKey.pem
+        location: public.pem
       issuer: https://test.com
 google:
   project-id: dummy
