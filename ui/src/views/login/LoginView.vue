@@ -39,7 +39,6 @@ import SntCard from "@/components/core/SntCard.vue";
 import SntInput from "@/components/core/SntInput.vue";
 import { ref } from "vue";
 import SntButton from "@/components/core/SntButton.vue";
-import axiosInstance from "@/module/axios";
 import SntForm from "@/components/core/SntForm.vue";
 
 import type { ErrorResponse } from "@/module/service";

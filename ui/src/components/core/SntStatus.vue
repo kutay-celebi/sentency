@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import RiCheckboxCircleLine from "~icons/ri/checkbox-circle-line";
 import RiErrorWarningLine from "~icons/ri/error-warning-line";
-import type {PropType} from "vue";
+import type { PropType } from "vue";
 
 defineProps({
   type: {
@@ -18,13 +18,13 @@ defineProps({
   <div class="snt-status">
     <div :class="['snt-status_content', `${type}-text`]">
       <div class="snt-status_msg">
-        <ri-checkbox-circle-line v-if="type === 'success'"/>
-        <ri-error-warning-line v-if="type === 'error'"/>
+        <ri-checkbox-circle-line v-if="type === 'success'" />
+        <ri-error-warning-line v-if="type === 'error'" />
         {{ message }}
       </div>
 
       <div class="snt-status_actions">
-        <slot/>
+        <slot />
       </div>
     </div>
   </div>

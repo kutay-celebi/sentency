@@ -1,6 +1,6 @@
 import axiosInstance from "@/module/axios";
 import { AxiosResponse } from "axios";
-import { SentencePersistResponse, SentenceRequest, SentenceTranslateResponse, WordResponse } from "@/module/service";
+import { SentencePersistResponse, SentenceRequest, SentenceTranslateResponse } from "@/module/service";
 
 export const translate = (sentence: string | undefined): Promise<AxiosResponse<SentenceTranslateResponse>> => {
   return axiosInstance({

@@ -17,6 +17,7 @@ export const useNotification = () => {
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const NotificationPlugin: Plugin = async (app, options) => {
   const bus = useEventBus(NotificationBusKey);
 

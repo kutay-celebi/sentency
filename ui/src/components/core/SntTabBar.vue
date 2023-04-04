@@ -1,6 +1,4 @@
-<script lang="ts" setup>
-import SntTabBarItem from "@/components/core/SntTabBarItem.vue";
-</script>
+<script lang="ts" setup></script>
 
 <template>
   <div class="snt-tabbar">
