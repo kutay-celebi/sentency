@@ -24,13 +24,8 @@ quarkus:
       category:
         words-api:
           level: DEBUG
-        "org.jboss.resteasy.reactive.client.logging":
-          level: DEBUG
       level: INFO
-    http:
-      access-log:
-        enabled: true
-      cors: false
+
     smallrye-jwt:
       enabled: true
     flyway:

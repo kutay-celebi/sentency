@@ -8,9 +8,11 @@ import static org.hamcrest.Matchers.notNullValue;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import javax.inject.Inject;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,6 +37,7 @@ class SentenceResourceTest extends AbstractWordTestSuite {
   SentenceRepository sentenceRepository;
 
   @TestHTTPEndpoint(SentenceResource.class)
+  @TestSecurity(authorizationEnabled = false)
   @Nested
   public class Translate {
 
@@ -44,8 +47,13 @@ class SentenceResourceTest extends AbstractWordTestSuite {
       Mockito.when(translationExternalService.translate(Mockito.any())).thenReturn("translated");
 
       // when
-      ValidatableResponse actual =
-          given().queryParam("sentence", "sentence").when().get("/translate").then().log().all();
+      ValidatableResponse actual = given()
+          .queryParam("sentence", "sentence")
+          .when()
+          .get("/translate")
+          .then()
+          .log()
+          .all();
 
       // then
       actual.statusCode(200);
@@ -57,18 +65,21 @@ class SentenceResourceTest extends AbstractWordTestSuite {
 
   @Nested
   @TestHTTPEndpoint(SentenceResource.class)
+  @TestSecurity(authorizationEnabled = false)
   public class Save {
 
     @Test
     void unknownParameters() {
       // given
-      SentenceRequest payload =
-          SentenceRequest.builder().userId("unknown").wordId("word-id").sentence("sentence")
-              .build();
+      SentenceRequest payload = SentenceRequest
+          .builder()
+          .userId("unknown")
+          .wordId("word-id")
+          .sentence("sentence")
+          .build();
 
       // when
-      ValidatableResponse actual =
-          given().contentType(ContentType.JSON).when().body(payload).post().then().log().all();
+      ValidatableResponse actual = given().contentType(ContentType.JSON).when().body(payload).post().then().log().all();
 
       // then
       actual.statusCode(404);
@@ -85,13 +96,15 @@ class SentenceResourceTest extends AbstractWordTestSuite {
       Word word = saveWord();
       UserWord userWord = saveUserWord(user, word);
 
-      SentenceRequest payload =
-          SentenceRequest.builder().sentence("sentence").userId(user.getId()).wordId(word.getId())
-              .build();
+      SentenceRequest payload = SentenceRequest
+          .builder()
+          .sentence("sentence")
+          .userId(user.getId())
+          .wordId(word.getId())
+          .build();
 
       // when
-      ValidatableResponse actual = given().contentType(ContentType.JSON).body(payload).post().then()
-          .log().all();
+      ValidatableResponse actual = given().contentType(ContentType.JSON).body(payload).post().then().log().all();
 
       // then
       actual.statusCode(200);
@@ -105,6 +118,7 @@ class SentenceResourceTest extends AbstractWordTestSuite {
 
   @Nested
   @TestHTTPEndpoint(SentenceResource.class)
+  @TestSecurity(authorizationEnabled = false)
   public class Query {
 
     @Test
@@ -116,15 +130,19 @@ class SentenceResourceTest extends AbstractWordTestSuite {
       Sentence toBeSaved = Sentence.builder().sentence("sentence").userWord(userWord).build();
       sentenceRepository.persistAndFlush(toBeSaved);
 
-      SentencePageQueryRequest payload = SentencePageQueryRequest.builder()
-          .userId(StringQueryItem.builder()
-              .value(user.getId())
-              .build())
+      SentencePageQueryRequest payload = SentencePageQueryRequest
+          .builder()
+          .userId(StringQueryItem.builder().value(user.getId()).build())
           .build();
 
       // when
-      ValidatableResponse actual =
-          given().contentType(ContentType.JSON).body(payload).post("/query").then().log().all();
+      ValidatableResponse actual = given()
+          .contentType(ContentType.JSON)
+          .body(payload)
+          .post("/query")
+          .then()
+          .log()
+          .all();
 
       // then
       actual.statusCode(200);
@@ -136,5 +154,62 @@ class SentenceResourceTest extends AbstractWordTestSuite {
       actual.body("content.nextReview", notNullValue());
     }
   }
+
+  @Nested
+  @TestHTTPEndpoint(SentenceResource.class)
+  class Security {
+
+    @Test
+    void query_shouldBeProtected() {
+      // given
+      SentencePageQueryRequest payload = SentencePageQueryRequest
+          .builder()
+          .userId(StringQueryItem.builder().value("dummy").build())
+          .build();
+
+      // when
+      ValidatableResponse actual = given()
+          .contentType(ContentType.JSON)
+          .body(payload)
+          .post("/query")
+          .then()
+          .log()
+          .all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
+    }
+
+    @Test
+    void save_shouldBeProtected() {
+      // given
+      SentenceRequest payload = SentenceRequest.builder().sentence("sentence").userId("dummy").wordId("dummy").build();
+
+      // when
+      ValidatableResponse actual = given().contentType(ContentType.JSON).body(payload).post().then().log().all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
+    }
+
+    @Test
+    void translate_shouldBeProtected() {
+      // given
+      Mockito.when(translationExternalService.translate(Mockito.any())).thenReturn("translated");
+
+      // when
+      ValidatableResponse actual = given()
+          .queryParam("sentence", "sentence")
+          .when()
+          .get("/translate")
+          .then()
+          .log()
+          .all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
+    }
+  }
+
 
 }
