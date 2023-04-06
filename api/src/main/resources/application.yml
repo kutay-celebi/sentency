@@ -47,12 +47,6 @@ quarkus:
 "%prod":
   quarkus:
     http:
-      cors:
-        ~: true
-        methods: GET,PUT,POST,DELETE,OPTIONS,HEAD
-        access-control-allow-credentials: true
-        origins: sentency.nekasoft.com.tr
-        headers: content-type,accept,Authorization
       access-log:
         enabled: true
     smallrye-jwt:
