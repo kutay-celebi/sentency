@@ -2,6 +2,7 @@ package tr.com.nekasoft.sentency.api.endpoint;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import io.quarkus.security.Authenticated;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ import tr.com.nekasoft.sentency.api.data.userword.UserWordRequest;
 import tr.com.nekasoft.sentency.api.service.UserWordService;
 
 @Resource
+@Authenticated
 @Path("/user-word")
 @Produces(APPLICATION_JSON)
 public class UserWordResource {

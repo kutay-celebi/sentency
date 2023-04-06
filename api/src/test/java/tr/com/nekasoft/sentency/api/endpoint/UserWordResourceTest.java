@@ -11,11 +11,13 @@ import static tr.com.nekasoft.sentency.api.data.userword.Difficulty.HARD;
 
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import java.time.Duration;
 import java.time.Instant;
 import javax.inject.Inject;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,7 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
   protected SentencyConfig sentencyConfig;
 
   @Nested
+  @TestSecurity(authorizationEnabled = false)
   @TestHTTPEndpoint(UserWordResource.class)
   class NextReview {
 
@@ -83,7 +86,7 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
       // given
       User user = saveUser();
       Word word = saveWord();
-      UserWord userWord = saveUserWord(user, word, false);
+      saveUserWord(user, word, false);
 
       // when
       ValidatableResponse actual = given().when().get("/{user-id}/next-review", user.getId()).then().log().all();
@@ -95,6 +98,7 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
   }
 
   @Nested
+  @TestSecurity(authorizationEnabled = false)
   @TestHTTPEndpoint(UserWordResource.class)
   class FindById {
 
@@ -134,6 +138,7 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
   }
 
   @Nested
+  @TestSecurity(authorizationEnabled = false)
   @TestHTTPEndpoint(UserWordResource.class)
   class AddWord {
 
@@ -247,6 +252,7 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
   }
 
   @Nested
+  @TestSecurity(authorizationEnabled = false)
   @TestHTTPEndpoint(UserWordResource.class)
   class GetUserWordList {
 
@@ -285,6 +291,7 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
   }
 
   @Nested
+  @TestSecurity(authorizationEnabled = false)
   @TestHTTPEndpoint(UserWordResource.class)
   class AdjustDifficulty {
 
@@ -374,6 +381,7 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
   }
 
   @Nested
+  @TestSecurity(authorizationEnabled = false)
   @TestHTTPEndpoint(UserWordResource.class)
   class RemoveReviewList {
 
@@ -416,6 +424,112 @@ public class UserWordResourceTest extends AbstractWordTestSuite {
       // then
       actual.statusCode(404);
       actual.body("code", equalTo(ExceptionCode.DATA_NOT_FOUND.getCode()));
+
+    }
+  }
+
+  @Nested
+  @TestHTTPEndpoint(UserWordResource.class)
+  class Security {
+
+    @Test
+    void nextReview() {
+      // given
+
+      // when
+      ValidatableResponse actual = given().when().get("/{user-id}/next-review", "dummy").then().log().all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
+
+    }
+
+    @Test
+    void findById() {
+      // given
+
+      // when
+      ValidatableResponse actual = given()
+          .pathParam("user-word-id", "unknown")
+          .delete("/{user-word-id}")
+          .then()
+          .log()
+          .all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
+
+    }
+
+    @Test
+    void addNewWord() {
+      // given
+      Word word = saveWord();
+      UserWordRequest payload = UserWordRequest.builder().userId("unknown").wordId(word.getId()).build();
+
+      // when
+      ValidatableResponse actual = given().contentType(ContentType.JSON).body(payload).post().then().log().all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
+
+    }
+
+    @Test
+    void success() {
+      // given
+      UserWordPageRequest payload = UserWordPageRequest
+          .builder()
+          .userId(StringQueryItem.builder().value("dummy").build())
+          .build();
+
+      // when
+      ValidatableResponse actual = given()
+          .contentType(ContentType.JSON)
+          .body(payload)
+          .post("/query")
+          .then()
+          .log()
+          .all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
+
+    }
+
+    @Test
+    void adjustDifficulty() {
+      // given
+
+      var payload = UserWordDifficultyRequest.builder().difficulty(HARD).userWordId("unknown").build();
+
+      // when
+      ValidatableResponse actual = given()
+          .contentType(ContentType.JSON)
+          .body(payload)
+          .put("/difficulty")
+          .then()
+          .log()
+          .all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
+    }
+
+    @Test
+    void removeReviewList() {
+      // given
+
+      // when
+      ValidatableResponse actual = given()
+          .pathParam("user-word-id", "unknown")
+          .delete("/{user-word-id}")
+          .then()
+          .log()
+          .all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
 
     }
   }
