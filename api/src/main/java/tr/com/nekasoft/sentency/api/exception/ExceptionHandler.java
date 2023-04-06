@@ -16,17 +16,19 @@ import tr.com.nekasoft.sentency.api.data.error.ValidationErrorResponseItem;
 public class ExceptionHandler {
 
   @ServerExceptionMapper
-  public RestResponse<ValidationErrorResponse> mapValidation(
-      ResteasyReactiveViolationException ex) {
-    var errors = ex.getConstraintViolations()
+  public RestResponse<ValidationErrorResponse> mapValidation(ResteasyReactiveViolationException ex) {
+    var errors = ex
+        .getConstraintViolations()
         .stream()
-        .map(err -> ValidationErrorResponseItem.builder()
+        .map(err -> ValidationErrorResponseItem
+            .builder()
             .message(err.getMessage())
             .path(String.valueOf(err.getPropertyPath()))
             .value(String.valueOf(err.getInvalidValue()))
             .build())
         .collect(Collectors.toList());
-    ValidationErrorResponse response = ValidationErrorResponse.builder()
+    ValidationErrorResponse response = ValidationErrorResponse
+        .builder()
         .errors(errors)
         .code(ExceptionCode.BAD_REQUEST.getCode())
         .build();
@@ -36,66 +38,45 @@ public class ExceptionHandler {
 
   @ServerExceptionMapper
   public RestResponse<ErrorResponse> mapBusinessEx(BusinessException ex) {
-    ErrorResponse resp = ErrorResponse.builder()
+    ErrorResponse resp = ErrorResponse
+        .builder()
         .uuid(ex.getUuid())
         .code(ex.getCode())
         .errors(ex.getErrors())
         .args(ex.getArgs())
         .build();
 
-    log.error("\n\nError | {}:\nCODE: {}\nMessage: {}\nArguments: {} \n\n", resp.getUuid(),
-        resp.getCode(),
+    log.error("\n\nError | {}:\nCODE: {}\nMessage: {}\nArguments: {} \n\n", resp.getUuid(), resp.getCode(),
         resp.getErrors(), ex.getArgs());
-
     log.error("Stacktrace | {}", resp.getUuid(), ex);
-
     return RestResponse.status(ex.getStatus(), resp);
   }
 
   @ServerExceptionMapper
   public RestResponse<ErrorResponse> mapThrowable(Throwable ex) {
-    ErrorResponse resp = ErrorResponse.builder()
-        .code(ExceptionCode.UNEXPECTED.getCode())
-        .errors(Collections.singletonList(ExceptionCode.UNEXPECTED.getMessage()))
-        .build();
-
-    log.error("\n\nError | {} : Detail: {} / {} \n\n", resp.getUuid(), resp.getCode(),
-        ex.getMessage());
-
-    log.debug("Stacktrace | {}", resp.getUuid(), ex);
-    log.error("err", ex);
-    return RestResponse.status(ExceptionCode.UNEXPECTED.getStatus(), resp);
+    return RestResponse.status(ExceptionCode.UNEXPECTED.getStatus(), mapUnexpectedError(ex));
   }
 
   @ServerExceptionMapper
   public RestResponse<ErrorResponse> mapClientException(ClientWebApplicationException ex) {
-    ErrorResponse resp = ErrorResponse.builder()
-        .code(ExceptionCode.EXTERNAL_SERVICE.getCode())
-        .errors(Collections.singletonList(
-            ExceptionCode.EXTERNAL_SERVICE.getMessage()))
-        .build();
-
-    log.error("\n\nError | {} : Detail: {} / {} \n\n", resp.getUuid(), resp.getCode(),
-        ex.getMessage());
-
-    log.debug("Stacktrace | {}", resp.getUuid(), ex);
-    log.error("err", ex);
-    return RestResponse.status(ExceptionCode.UNEXPECTED.getStatus(), resp);
+    return RestResponse.status(ExceptionCode.UNEXPECTED.getStatus(), mapUnexpectedError(ex));
   }
 
   @ServerExceptionMapper
   public RestResponse<ErrorResponse> mapClientException(NotFoundException ex) {
-    ErrorResponse resp = ErrorResponse.builder()
+    return RestResponse.status(ExceptionCode.UNEXPECTED.getStatus(), mapUnexpectedError(ex));
+  }
+
+  private static ErrorResponse mapUnexpectedError(Throwable ex) {
+    ErrorResponse resp = ErrorResponse
+        .builder()
         .code(ExceptionCode.EXTERNAL_SERVICE.getCode())
-        .errors(Collections.singletonList(
-            ExceptionCode.EXTERNAL_SERVICE.getMessage()))
+        .errors(Collections.singletonList(ExceptionCode.EXTERNAL_SERVICE.getMessage()))
         .build();
 
-    log.error("\n\nError | {} : Detail: {} / {} \n\n", resp.getUuid(), resp.getCode(),
-        ex.getMessage());
+    log.error("\n\nError | {} : Detail: {} / {} \n\n", resp.getUuid(), resp.getCode(), ex.getMessage());
 
     log.debug("Stacktrace | {}", resp.getUuid(), ex);
-    log.error("err", ex);
-    return RestResponse.status(ExceptionCode.UNEXPECTED.getStatus(), resp);
+    return resp;
   }
 }
