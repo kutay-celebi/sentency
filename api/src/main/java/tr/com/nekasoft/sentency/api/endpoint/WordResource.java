@@ -2,6 +2,7 @@ package tr.com.nekasoft.sentency.api.endpoint;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import io.quarkus.security.Authenticated;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -16,10 +17,11 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import tr.com.nekasoft.sentency.api.data.word.WordPageQueryRequest;
 import tr.com.nekasoft.sentency.api.service.WordService;
 
-@Resource
-@Produces(APPLICATION_JSON)
-@Path("/word")
 @Slf4j
+@Authenticated
+@Resource
+@Path("/word")
+@Produces(APPLICATION_JSON)
 public class WordResource {
 
   @Inject

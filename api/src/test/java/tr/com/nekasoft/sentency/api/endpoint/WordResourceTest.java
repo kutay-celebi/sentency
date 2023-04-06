@@ -9,8 +9,10 @@ import static org.mockito.Mockito.when;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.response.ValidatableResponse;
 import java.util.Collections;
+import org.apache.http.HttpStatus;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,7 @@ class WordResourceTest extends AbstractWordTestSuite {
 
   @Nested
   @TestHTTPEndpoint(WordResource.class)
+  @TestSecurity(authorizationEnabled = false)
   class FindById {
 
     @Test
@@ -50,9 +53,9 @@ class WordResourceTest extends AbstractWordTestSuite {
     }
   }
 
-
   @Nested
   @TestHTTPEndpoint(WordResource.class)
+  @TestSecurity(authorizationEnabled = false)
   class SearchWord {
 
     @Test
@@ -93,6 +96,34 @@ class WordResourceTest extends AbstractWordTestSuite {
 
       // then
       actual.statusCode(404);
+
+    }
+
+  }
+
+  @Nested
+  @TestHTTPEndpoint(WordResource.class)
+  class Security {
+
+    @Test
+    void searchWord() {
+      // given
+      // when
+      ValidatableResponse actual = given().when().get("/{word}", "test2").then().log().all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
+
+    }
+
+    @Test
+    void success() {
+      // given
+      // when
+      ValidatableResponse actual = given().when().get("/id/{id}", "dummy").then().log().all();
+
+      // then
+      actual.statusCode(HttpStatus.SC_UNAUTHORIZED);
 
     }
 
