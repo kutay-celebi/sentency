@@ -19,6 +19,8 @@ dependencies {
     implementation "io.quarkus:quarkus-hibernate-orm"
     implementation 'io.quarkus:quarkus-hibernate-validator'
 
+    implementation("io.quarkus:quarkus-cache")
+
     implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-rest-client-reactive'
     implementation 'io.quarkus:quarkus-resteasy-reactive'
