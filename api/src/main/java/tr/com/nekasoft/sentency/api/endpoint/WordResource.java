@@ -2,6 +2,7 @@ package tr.com.nekasoft.sentency.api.endpoint;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import io.quarkus.cache.CacheResult;
 import io.quarkus.security.Authenticated;
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -28,6 +29,7 @@ public class WordResource {
   WordService wordService;
 
   @GET
+  @CacheResult(cacheName = "search-word")
   @Path("/{word}")
   public Response getWord(@PathParam("word") String word) {
     return Response.ok(wordService.getWord(word)).build();
@@ -42,6 +44,7 @@ public class WordResource {
 
   @GET
   @Path("/id/{id}")
+  @CacheResult(cacheName = "word-by-id")
   public Response findById(@PathParam("id") String id) {
     return Response.ok(wordService.findById(id)).build();
   }

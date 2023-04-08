@@ -65,7 +65,7 @@ public class UserWordResource {
   @DELETE
   @Consumes(APPLICATION_JSON)
   @Path("/{user-word-id}")
-  public Response addWord(@RestPath("user-word-id") String userWordId) {
+  public Response removeWord(@RestPath("user-word-id") String userWordId) {
     return Response.ok(userWordService.removeReviewList(userWordId)).build();
   }
 }
