@@ -12,11 +12,6 @@ quarkus:
   rest-client:
     logging:
       scope: request-response
-    words-api:
-      uri: ${WORDS_API_RAPID_API_URI}
-      headers:
-        x-rapidapi-host: ${WORDS_API_RAPID_API_HOST}
-        x-rapidapi-key: ${WORDS_API_RAPID_API_KEY}
     lingua-robot:
       uri: ${LR_RAPID_API_URI}
       headers:
