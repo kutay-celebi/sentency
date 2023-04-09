@@ -64,9 +64,9 @@ java {
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
     systemProperty "GOOGLE_APPLICATION_CREDENTIALS", "./dev_google-service-key.json"
-    systemProperty "WORDS_API_RAPID_API_URI", "dummy"
-    systemProperty "WORDS_API_RAPID_API_HOST", "dummy"
-    systemProperty "WORDS_API_RAPID_API_KEY", "dummy"
+    systemProperty "LR_RAPID_API_URI", "dummy"
+    systemProperty "LR_RAPID_API_HOST", "dummy"
+    systemProperty "LR_RAPID_API_KEY", "dummy"
 
 
     finalizedBy jacocoTestReport

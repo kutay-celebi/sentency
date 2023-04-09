@@ -26,9 +26,9 @@
 | GOOGLE_PROJECT-ID              | Google project id                                                                                              |
 | GOOGLE_APPLICATION_CREDENTIALS | Google service accounts credential file path. [See also](#creating-google-service-account)                     |
 | GOOGLE_CLIENT-ID               | For google login. [See also](#creating-google-oauth-client)                                                    |
-| WORDS_API_RAPID_API_URI        | Rapid api base uri.                                                                                            |
-| WORDS_API_RAPID_API_HOST       | Rapid api host.                                                                                                |
-| WORDS_API_RAPID_API_KEY        | Rapid api key.                                                                                                 |
+| LR_RAPID_API_URI               | Rapid api base uri.                                                                                            |
+| LR_RAPID_API_HOST              | Rapid api host.                                                                                                |
+| LR_RAPID_API_KEY               | Rapid api key.                                                                                                 |
 
 ## Creating Google Service Account
 
