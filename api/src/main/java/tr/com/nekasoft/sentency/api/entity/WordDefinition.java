@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import tr.com.nekasoft.sentency.api.data.word.SynonymAntonym;
 import tr.com.nekasoft.sentency.api.data.word.WordDefinitionResponse;
 
 @Setter
@@ -33,14 +34,14 @@ public class WordDefinition extends BaseEntity {
   @Column(name = "definition")
   private String definition;
 
+  @Column(name = "definition_of")
+  private String definitionOf;
+
   @Column(name = "definition_tr")
   private String definitionTr;
 
   @Column(name = "part_of_speech")
   private String partOfSpeech;
-
-  @Column(name = "synonyms")
-  private String synonyms;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "word_id")
@@ -50,19 +51,29 @@ public class WordDefinition extends BaseEntity {
   @OneToMany(mappedBy = "definition", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private Set<WordDefinitionExamples> examples = new LinkedHashSet<>();
 
+  @Builder.Default
+  @OneToMany(mappedBy = "wordDefinition", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  private Set<WordSynonymAntonym> synonymAntonym = new LinkedHashSet<>();
+
   public WordDefinitionResponse toResponse() {
-    var builder = WordDefinitionResponse.builder()
+    var builder = WordDefinitionResponse
+        .builder()
         .id(id)
         .definitionTr(definitionTr)
+        .definitionOf(definitionOf)
         .partOfSpeech(partOfSpeech)
+        .synonyms(synonymAntonym
+            .stream()
+            .filter(synonymAntonym -> SynonymAntonym.SYNONYM.equals(synonymAntonym.getType()))
+            .map(WordSynonymAntonym::toResponse)
+            .collect(Collectors.toSet()))
+        .antonyms(synonymAntonym
+            .stream()
+            .filter(synonymAntonym -> SynonymAntonym.ANTONYM.equals(synonymAntonym.getType()))
+            .map(WordSynonymAntonym::toResponse)
+            .collect(Collectors.toSet()))
         .definition(definition)
-        .examples(examples.parallelStream()
-            .map(WordDefinitionExamples::getExample)
-            .collect(Collectors.toSet()));
-
-    if (synonyms != null) {
-      builder.synonyms(Set.of(synonyms.split(",")));
-    }
+        .examples(examples.parallelStream().map(WordDefinitionExamples::getExample).collect(Collectors.toSet()));
 
     return builder.build();
   }

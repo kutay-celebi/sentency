@@ -19,8 +19,10 @@ public class WordDefinitionResponse implements Serializable {
 
   private String id;
   private String definition;
+  private String definitionOf;
   private String definitionTr;
   private Set<String> examples;
-  private Set<String> synonyms;
+  private Set<WordSynonymAntonymResponse> synonyms;
+  private Set<WordSynonymAntonymResponse> antonyms;
   private String partOfSpeech;
 }

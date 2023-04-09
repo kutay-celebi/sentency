@@ -15,8 +15,8 @@ import tr.com.nekasoft.sentency.api.entity.Word;
 import tr.com.nekasoft.sentency.api.entity.WordDefinition;
 import tr.com.nekasoft.sentency.api.exception.ExceptionCode;
 import tr.com.nekasoft.sentency.api.external.google.GoogleTranslationExternalService;
-import tr.com.nekasoft.sentency.api.external.wordsapi.GetWordsResponse;
-import tr.com.nekasoft.sentency.api.external.wordsapi.WordsApiService;
+import tr.com.nekasoft.sentency.api.external.linguarobot.LinguaRobotService;
+import tr.com.nekasoft.sentency.api.external.linguarobot.LrResponse;
 import tr.com.nekasoft.sentency.api.repository.WordRepository;
 import tr.com.nekasoft.sentency.api.service.WordService;
 
@@ -26,7 +26,7 @@ public class WordServiceImpl implements WordService {
 
   @Inject
   @RestClient
-  protected WordsApiService wordsApiService;
+  protected LinguaRobotService linguaRobotService;
 
   @Inject
   protected WordRepository wordRepository;
@@ -42,8 +42,9 @@ public class WordServiceImpl implements WordService {
   @Override
   @Transactional
   public WordResponse getWord(String word) {
-    Optional<Word> findWord =
-        wordRepository.softFind(WordFindRequest.builder().word(word).build()).firstResultOptional();
+    Optional<Word> findWord = wordRepository
+        .softFind(WordFindRequest.builder().word(word).build())
+        .firstResultOptional();
 
     if (findWord.isPresent()) {
       return findWord.get().toResponse();
@@ -53,22 +54,14 @@ public class WordServiceImpl implements WordService {
 
   @Override
   public WordResponse findById(String id) {
-    return wordRepository.softFindById(id).orElseThrow(ExceptionCode.DATA_NOT_FOUND::toException)
-        .toResponse();
+    return wordRepository.softFindById(id).orElseThrow(ExceptionCode.DATA_NOT_FOUND::toException).toResponse();
   }
 
   private WordResponse fetchWordAndSave(String word) {
+    LrResponse lrResponse = linguaRobotService.getWord(word);
+    Set<WordDefinition> definitions = lrResponse.toDefinitions();
 
-    Word toBeSaved = Word.builder().word(word).build();
-    GetWordsResponse wordsApiResponse = wordsApiService.getWord(word);
-
-    Set<WordDefinition> wordDefinitions = wordsApiResponse.toWordDefinitionEntity(toBeSaved);
-    wordDefinitions.forEach(def -> {
-      String translation = googleService.translate(def.getDefinition());
-      def.setDefinitionTr(translation);
-    });
-    toBeSaved.setDefinitions(wordDefinitions);
-
+    Word toBeSaved = Word.builder().word(word).definitions(definitions).build();
     wordRepository.persistAndFlush(toBeSaved);
     return toBeSaved.toResponse();
   }

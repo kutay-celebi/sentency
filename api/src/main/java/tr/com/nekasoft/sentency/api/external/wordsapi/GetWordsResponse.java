@@ -42,11 +42,6 @@ public class GetWordsResponse implements Serializable {
           .definition(def.getDefinition())
           .build();
 
-      if (def.getSynonyms() != null) {
-        String synonyms = def.getSynonyms().parallelStream().collect(Collectors.joining(","));
-        wordDefinition.setSynonyms(synonyms);
-      }
-
       if (def.getExamples() != null) {
         Set<WordDefinitionExamples> examples = def
             .getExamples()

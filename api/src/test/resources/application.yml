@@ -1,5 +1,7 @@
 quarkus:
   rest-client:
+    lingua-robot:
+      uri: dummy
     words-api:
       uri: dummy
   smallrye-jwt:
