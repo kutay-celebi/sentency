@@ -67,6 +67,7 @@ test {
     systemProperty "LR_RAPID_API_URI", "dummy"
     systemProperty "LR_RAPID_API_HOST", "dummy"
     systemProperty "LR_RAPID_API_KEY", "dummy"
+    failFast false
 
 
     finalizedBy jacocoTestReport
