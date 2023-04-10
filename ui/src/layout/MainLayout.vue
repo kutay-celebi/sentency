@@ -10,7 +10,7 @@
     </main>
     <snt-tab-bar>
       <snt-tab-bar-item to="/">
-        <ri-search2-line />
+        <ri-search-line />
       </snt-tab-bar-item>
       <snt-tab-bar-item to="/sentence">
         <ri-pencil-line />
@@ -19,7 +19,7 @@
         <ri-list-check2 />
       </snt-tab-bar-item>
       <snt-tab-bar-item to="#">
-        <ri-user5-line />
+        <ri-account-circle-line />
       </snt-tab-bar-item>
     </snt-tab-bar>
   </div>
@@ -28,10 +28,10 @@
 <script lang="ts" setup>
 import SntTabBar from "@/components/core/SntTabBar.vue";
 import SntTabBarItem from "@/components/core/SntTabBarItem.vue";
-import RiUser5Line from "~icons/ri/user-5-line";
 import RiPencilLine from "~icons/ri/pencil-line";
 import RiListCheck2 from "~icons/ri/list-check-2";
-import RiSearch2Line from "~icons/ri/search-2-line";
+import RiSearchLine from "~icons/ri/search-line";
+import RiAccountCircleLine from "~icons/ri/account-circle-line";
 </script>
 
 <style lang="scss" scoped>
