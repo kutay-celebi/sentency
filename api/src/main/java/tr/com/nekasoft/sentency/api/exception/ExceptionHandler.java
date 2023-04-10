@@ -70,8 +70,8 @@ public class ExceptionHandler {
   private static ErrorResponse mapUnexpectedError(Throwable ex) {
     ErrorResponse resp = ErrorResponse
         .builder()
-        .code(ExceptionCode.EXTERNAL_SERVICE.getCode())
-        .errors(Collections.singletonList(ExceptionCode.EXTERNAL_SERVICE.getMessage()))
+        .code(ExceptionCode.UNEXPECTED.getCode())
+        .errors(Collections.singletonList(ExceptionCode.UNEXPECTED.getMessage()))
         .build();
 
     log.error("\n\nError | {} : Detail: {} / {} \n\n", resp.getUuid(), resp.getCode(), ex.getMessage());
