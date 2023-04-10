@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import javax.inject.Inject;
 import org.apache.sshd.common.config.keys.loader.openssh.kdf.BCrypt;
 import tr.com.nekasoft.sentency.api.entity.User;
+import tr.com.nekasoft.sentency.api.entity.UserConfig;
 import tr.com.nekasoft.sentency.api.repository.UserRepository;
 
 public abstract class AbstractUserTestSuite extends AbstractTestSuite {
@@ -17,7 +18,12 @@ public abstract class AbstractUserTestSuite extends AbstractTestSuite {
 
   protected User saveUser(String rawPassword) {
     String password = BCrypt.hashpw(rawPassword, BCrypt.gensalt(12));
+
     User user = User.builder().username(Faker.instance().internet().emailAddress()).password(password).build();
+
+    UserConfig userConfig = UserConfig.builder().targetLanguage("tr").user(user).build();
+    user.setUserConfig(userConfig);
+
     userRepository.persistAndFlush(user);
     return user;
   }

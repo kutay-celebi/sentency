@@ -1,4 +1,8 @@
 quarkus:
+  log:
+    category:
+      "tr.com.nekasoft":
+        level: DEBUG
   rest-client:
     lingua-robot:
       uri: dummy
@@ -19,7 +23,6 @@ quarkus:
       generation: none
     scripts:
       generation: none
-
 
 smallrye:
   jwt:

@@ -15,6 +15,7 @@ import tr.com.nekasoft.sentency.api.data.auth.JwtResponse;
 import tr.com.nekasoft.sentency.api.data.auth.LoginRequest;
 import tr.com.nekasoft.sentency.api.data.auth.RegisterRequest;
 import tr.com.nekasoft.sentency.api.entity.User;
+import tr.com.nekasoft.sentency.api.entity.UserConfig;
 import tr.com.nekasoft.sentency.api.exception.ExceptionCode;
 import tr.com.nekasoft.sentency.api.repository.UserRepository;
 import tr.com.nekasoft.sentency.api.service.AuthService;
@@ -41,6 +42,10 @@ public class AuthServiceImpl implements AuthService {
 
     String password = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt(12));
     User toBeSaved = User.builder().username(request.getUsername()).password(password).build();
+
+    UserConfig userConfig = UserConfig.builder().user(toBeSaved).build();
+    toBeSaved.setUserConfig(userConfig);
+
     userRepository.persistAndFlush(toBeSaved);
   }
 
@@ -57,15 +62,26 @@ public class AuthServiceImpl implements AuthService {
         .firstResultOptional()
         .orElseGet(() -> {
           User toBeSaved = User.builder().username(idToken.getPayload().getEmail()).password(pass).build();
+
+          UserConfig userConfig = UserConfig.builder().user(toBeSaved).build();
+          toBeSaved.setUserConfig(userConfig);
+
           userRepository.persistAndFlush(toBeSaved);
           return toBeSaved;
         });
 
-    return JwtResponse.builder().userId(user.getId()).role(user.getRole()).token(generateJwt(user)).build();
+    return JwtResponse
+        .builder()
+        .userId(user.getId())
+        .role(user.getRole())
+        .token(generateJwt(user))
+        .targetLanguage(user.getUserConfig().getTargetLanguage())
+        .build();
 
   }
 
   @Override
+  @Transactional
   public JwtResponse login(LoginRequest request) {
     User user = userRepository
         .softFind(DefaultQueryRequest
@@ -80,7 +96,19 @@ public class AuthServiceImpl implements AuthService {
       throw ExceptionCode.BAD_CREDENTIAL.toException();
     }
 
-    return JwtResponse.builder().userId(user.getId()).role(user.getRole()).token(generateJwt(user)).build();
+    if (user.getUserConfig() == null) {
+      UserConfig userConfig = UserConfig.builder().user(user).build();
+      user.setUserConfig(userConfig);
+      userRepository.persistAndFlush(user);
+    }
+
+    return JwtResponse
+        .builder()
+        .userId(user.getId())
+        .role(user.getRole())
+        .token(generateJwt(user))
+        .targetLanguage(user.getUserConfig().getTargetLanguage())
+        .build();
   }
 
   private String generateJwt(User user) {

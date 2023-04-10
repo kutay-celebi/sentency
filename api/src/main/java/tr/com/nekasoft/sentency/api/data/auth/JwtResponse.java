@@ -20,4 +20,5 @@ public class JwtResponse implements Serializable {
   private String token;
   private String userId;
   private UserRole role;
+  private String targetLanguage;
 }

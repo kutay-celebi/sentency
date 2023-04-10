@@ -20,9 +20,6 @@ quarkus:
 "%dev":
   quarkus:
     log:
-      category:
-        words-api:
-          level: DEBUG
       level: INFO
 
     smallrye-jwt:
