@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import type { WordResponse } from "@/module/service";
-import SntTabView from "@/components/core/SntTabView.vue";
 import { computed, ref } from "vue";
+import type { WordResponse, WordSynonymAntonymResponse } from "@/module/service";
+import SntTabView from "@/components/core/SntTabView.vue";
 import type { SntTab } from "@/components/types";
 
 const tabs = ref<SntTab[]>([
@@ -18,11 +18,15 @@ const examples = computed<string[]>(() =>
     .map((def) => def.examples.filter((ex) => ex))
     .flat()
 );
-const synonyms = computed<string[]>(() =>
+const synonyms = computed<WordSynonymAntonymResponse[]>(() =>
   props.word?.definitions
     .filter((def) => def.synonyms)
-    .map((def) => def.synonyms.filter((syn) => syn))
+    .map((def) => def.synonyms)
     .flat()
+    .filter(
+      (value, index, self) =>
+        index === self.findIndex((t) => t.definition === value.definition && t.word === value.word)
+    )
 );
 
 const props = defineProps({
@@ -39,8 +43,8 @@ const props = defineProps({
     <transition name="slide" mode="out-in">
       <div v-if="activeTab === 'definitions'">
         <div v-for="definition in word.definitions" :key="definition.id" class="definition">
-          <i class="part-of-speech">{{ definition.partOfSpeech }}:</i>
-          {{ definition.definitionTr }}
+          <i class="text-bold">{{ definition.partOfSpeech }}:</i>
+          {{ definition.definition }}
         </div>
       </div>
       <div v-else-if="activeTab === 'examples'">
@@ -50,7 +54,7 @@ const props = defineProps({
       </div>
       <div v-else-if="activeTab === 'Synonyms'">
         <div v-for="(syn, idx) in synonyms" :key="`syn-${idx}`" class="definition">
-          {{ syn }}
+          <span class="text-bold">{{ syn.word }}</span> <span v-if="syn.definition">- {{ syn.definition }}</span>
         </div>
       </div>
     </transition>
@@ -76,9 +80,5 @@ const props = defineProps({
   border-radius: 4px;
   padding: 0.25rem;
   margin: 0.125rem 0;
-}
-
-.part-of-speech {
-  font-weight: 700;
 }
 </style>

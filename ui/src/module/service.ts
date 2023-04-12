@@ -11,12 +11,18 @@ export interface JwtResponse {
   role: "ADMIN" | "USER";
 }
 
+export interface WordSynonymAntonymResponse {
+  definition: string;
+  word: string;
+}
+
 export interface WordDefinitionResponse {
   id: string;
   definition: string;
-  definitionTr: string;
+  definitionOf: string;
   examples: string[];
-  synonyms: string[];
+  synonyms: WordSynonymAntonymResponse[];
+  antonyms: WordSynonymAntonymResponse[];
   partOfSpeech: string;
 }
 
