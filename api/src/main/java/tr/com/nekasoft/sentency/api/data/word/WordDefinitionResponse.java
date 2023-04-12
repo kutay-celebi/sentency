@@ -1,6 +1,8 @@
 package tr.com.nekasoft.sentency.api.data.word;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,10 +20,8 @@ public class WordDefinitionResponse implements Serializable {
   private static final long serialVersionUID = -5358304466295154777L;
 
   private String id;
-  private String definition;
-  private String definitionOf;
   private Set<String> examples;
   private Set<WordSynonymAntonymResponse> synonyms;
   private Set<WordSynonymAntonymResponse> antonyms;
-  private String partOfSpeech;
+  private Map<String, WordDefinitionPhrasesResponse> phrases = new HashMap<>();
 }

@@ -20,8 +20,10 @@ quarkus:
 "%dev":
   quarkus:
     log:
+      category:
+        "tr.com.nekasoft":
+          level: DEBUG
       level: INFO
-
     smallrye-jwt:
       enabled: true
     flyway:

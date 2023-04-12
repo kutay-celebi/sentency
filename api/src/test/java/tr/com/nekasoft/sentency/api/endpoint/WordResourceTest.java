@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import io.quarkus.cache.CacheManager;
@@ -25,6 +26,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import tr.com.nekasoft.sentency.api.AbstractWordTestSuite;
 import tr.com.nekasoft.sentency.api.entity.Word;
+import tr.com.nekasoft.sentency.api.exception.ExceptionCode;
+import tr.com.nekasoft.sentency.api.external.google.GoogleTranslationExternalService;
 import tr.com.nekasoft.sentency.api.external.linguarobot.LinguaRobotService;
 import tr.com.nekasoft.sentency.api.external.linguarobot.LrEntry;
 import tr.com.nekasoft.sentency.api.external.linguarobot.LrLexemes;
@@ -38,6 +41,9 @@ class WordResourceTest extends AbstractWordTestSuite {
   @InjectMock
   @RestClient
   LinguaRobotService linguaRobotService;
+
+  @InjectMock
+  GoogleTranslationExternalService googleTranslationExternalService;
 
   @Inject
   CacheManager cacheManager;
@@ -72,6 +78,7 @@ class WordResourceTest extends AbstractWordTestSuite {
       // given
       String word = RandomStringUtils.randomAlphanumeric(5);
       mockLrService(word);
+      when(googleTranslationExternalService.translate(anyString())).thenReturn("translated");
 
       // when
       ValidatableResponse actual = given().when().get("/{word}", word).then().log().all();
@@ -79,8 +86,9 @@ class WordResourceTest extends AbstractWordTestSuite {
       // then
       actual.statusCode(200);
       actual.body("word", equalTo(word));
-      actual.body("definitions.definition", contains("definition"));
-      actual.body("definitions.partOfSpeech", contains("noun"));
+      actual.body("definitions.phrases.en.definition", contains(word));
+      actual.body("definitions.phrases.en.partOfSpeech", contains("noun"));
+      actual.body("definitions.phrases.tr.definition", contains("translated"));
 
       actual.body("definitions.synonyms.word.flatten()", contains("synonym"));
       actual.body("definitions.synonyms.definition.flatten()", contains("synonym-sense"));
@@ -89,6 +97,26 @@ class WordResourceTest extends AbstractWordTestSuite {
       actual.body("definitions.antonyms.definition.flatten()", contains("antonym-sense"));
 
       actual.body("definitions.examples.flatten()", contains("example"));
+
+    }
+
+    @Test
+    void wordNotFound() {
+      // given
+      when(linguaRobotService.getWord(anyString())).thenReturn(
+          LrResponse.builder().entries(Collections.emptyList()).build());
+
+      // when
+      ValidatableResponse actual = given()
+          .when()
+          .get("/{word}", RandomStringUtils.randomAlphanumeric(5))
+          .then()
+          .log()
+          .all();
+
+      // then
+      actual.statusCode(404);
+      actual.body("body", equalTo(ExceptionCode.DATA_NOT_FOUND.getCode()));
 
     }
   }
@@ -156,11 +184,7 @@ class WordResourceTest extends AbstractWordTestSuite {
         .sense("antonym-sense")
         .antonyms(List.of("antonym"))
         .build();
-    LrSense sense = LrSense
-        .builder()
-        .definition("definition")
-        .usageExamples(Collections.singletonList("example"))
-        .build();
+    LrSense sense = LrSense.builder().definition(word).usageExamples(Collections.singletonList("example")).build();
     LrLexemes lexeme = LrLexemes
         .builder()
         .lemma(word)

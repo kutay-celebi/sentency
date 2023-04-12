@@ -43,8 +43,8 @@ const props = defineProps({
     <transition name="slide" mode="out-in">
       <div v-if="activeTab === 'definitions'">
         <div v-for="definition in word.definitions" :key="definition.id" class="definition">
-          <i class="text-bold">{{ definition.partOfSpeech }}:</i>
-          {{ definition.definition }}
+          <i class="text-bold">{{ definition.phrases.en.partOfSpeech }}:</i>
+          {{ definition.phrases.tr.definition }}
         </div>
       </div>
       <div v-else-if="activeTab === 'examples'">

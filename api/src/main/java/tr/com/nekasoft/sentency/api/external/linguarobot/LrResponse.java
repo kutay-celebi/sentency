@@ -14,6 +14,7 @@ import tr.com.nekasoft.sentency.api.data.word.SynonymAntonym;
 import tr.com.nekasoft.sentency.api.entity.Word;
 import tr.com.nekasoft.sentency.api.entity.WordDefinition;
 import tr.com.nekasoft.sentency.api.entity.WordDefinitionExamples;
+import tr.com.nekasoft.sentency.api.entity.WordDefinitionPhrases;
 import tr.com.nekasoft.sentency.api.entity.WordSynonymAntonym;
 import tr.com.nekasoft.sentency.api.exception.ExceptionCode;
 
@@ -57,13 +58,17 @@ public class LrResponse implements Serializable {
   }
 
   private static WordDefinition mapSenseToDefinition(Word word, LrLexemes lexeme, LrSense sense, LrSense parent) {
-    WordDefinition definition = WordDefinition
+    WordDefinition definition = WordDefinition.builder().word(word).build();
+    WordDefinitionPhrases enPhrases = WordDefinitionPhrases
         .builder()
-        .word(word)
+        .wordDefinition(definition)
+        .lang("en")
         .definition(sense.getDefinition())
         .definitionOf(parent != null ? parent.getDefinition() : null)
         .partOfSpeech(lexeme.getPartOfSpeech())
         .build();
+
+    definition.getPhrases().put("en", enPhrases);
 
     if (lexeme.getSynonymSets() != null) {
       Set<WordSynonymAntonym> synonyms = lexeme

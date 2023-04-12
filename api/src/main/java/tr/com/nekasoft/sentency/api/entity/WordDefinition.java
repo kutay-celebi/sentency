@@ -1,14 +1,16 @@
 package tr.com.nekasoft.sentency.api.entity;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import tr.com.nekasoft.sentency.api.data.word.SynonymAntonym;
+import tr.com.nekasoft.sentency.api.data.word.WordDefinitionPhrasesResponse;
 import tr.com.nekasoft.sentency.api.data.word.WordDefinitionResponse;
 
 @Setter
@@ -31,18 +34,6 @@ public class WordDefinition extends BaseEntity {
 
   private static final long serialVersionUID = -3642757426340941961L;
 
-  @Column(name = "definition")
-  private String definition;
-
-  @Column(name = "definition_of")
-  private String definitionOf;
-
-  @Column(name = "definition_tr")
-  private String definitionTr;
-
-  @Column(name = "part_of_speech")
-  private String partOfSpeech;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "word_id")
   private Word word;
@@ -55,12 +46,15 @@ public class WordDefinition extends BaseEntity {
   @OneToMany(mappedBy = "wordDefinition", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private Set<WordSynonymAntonym> synonymAntonym = new LinkedHashSet<>();
 
+  @Builder.Default
+  @MapKey(name = "lang")
+  @OneToMany(mappedBy = "wordDefinition", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  private Map<String, WordDefinitionPhrases> phrases = new HashMap<>();
+
   public WordDefinitionResponse toResponse() {
     var builder = WordDefinitionResponse
         .builder()
         .id(id)
-        .definitionOf(definitionOf)
-        .partOfSpeech(partOfSpeech)
         .synonyms(synonymAntonym
             .stream()
             .filter(synonymAntonym -> SynonymAntonym.SYNONYM.equals(synonymAntonym.getType()))
@@ -71,8 +65,14 @@ public class WordDefinition extends BaseEntity {
             .filter(synonymAntonym -> SynonymAntonym.ANTONYM.equals(synonymAntonym.getType()))
             .map(WordSynonymAntonym::toResponse)
             .collect(Collectors.toSet()))
-        .definition(definition)
         .examples(examples.parallelStream().map(WordDefinitionExamples::getExample).collect(Collectors.toSet()));
+
+    Map<String, WordDefinitionPhrasesResponse> phrases = this.phrases
+        .values()
+        .stream()
+        .collect(Collectors.toMap(WordDefinitionPhrases::getLang, WordDefinitionPhrases::toResponse));
+
+    builder.phrases(phrases);
 
     return builder.build();
   }

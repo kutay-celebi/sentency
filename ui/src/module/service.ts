@@ -16,14 +16,18 @@ export interface WordSynonymAntonymResponse {
   word: string;
 }
 
-export interface WordDefinitionResponse {
-  id: string;
+export interface WordDefinitionPhrasesResponse {
   definition: string;
   definitionOf: string;
+  partOfSpeech: string;
+}
+
+export interface WordDefinitionResponse {
+  id: string;
   examples: string[];
   synonyms: WordSynonymAntonymResponse[];
   antonyms: WordSynonymAntonymResponse[];
-  partOfSpeech: string;
+  phrases: Record<string, WordDefinitionPhrasesResponse>;
 }
 
 export interface WordResponse {

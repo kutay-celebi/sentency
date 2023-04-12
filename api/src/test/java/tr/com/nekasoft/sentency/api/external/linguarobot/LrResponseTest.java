@@ -5,8 +5,10 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.hasValue;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +50,7 @@ class LrResponseTest {
   }
 
   @Test
-  void mapRootFields() {
+  void mapPhrases() {
     // given
 
     // when
@@ -56,8 +58,9 @@ class LrResponseTest {
 
     // then
     assertThat(actual, hasSize(1));
-    assertThat(actual, hasItem(hasProperty("definition", equalTo(definition))));
-    assertThat(actual, hasItem(hasProperty("partOfSpeech", equalTo(partOfSpeech))));
+    assertThat(actual, hasItem(hasProperty("phrases", hasKey("en"))));
+    assertThat(actual, hasItem(hasProperty("phrases", hasValue(hasProperty("definition", equalTo(definition))))));
+    assertThat(actual, hasItem(hasProperty("phrases", hasValue(hasProperty("partOfSpeech", equalTo(partOfSpeech))))));
 
   }
 
@@ -147,8 +150,10 @@ class LrResponseTest {
     Set<WordDefinition> actual = instance.toDefinitions(word);
 
     // then
-    assertThat(actual, hasItem(hasProperty("definition", equalTo("sub"))));
-    assertThat(actual, hasItem(hasProperty("definitionOf", equalTo("parent"))));
+    assertThat(actual, hasItem(hasProperty("phrases", hasKey("en"))));
+    assertThat(actual, hasItem(hasProperty("phrases", hasValue(hasProperty("definition", equalTo("sub"))))));
+    assertThat(actual, hasItem(hasProperty("phrases", hasValue(hasProperty("definitionOf", equalTo("parent"))))));
+    assertThat(actual, hasItem(hasProperty("phrases", hasValue(hasProperty("partOfSpeech", equalTo(partOfSpeech))))));
 
   }
 

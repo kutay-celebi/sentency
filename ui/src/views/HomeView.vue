@@ -2,7 +2,7 @@
 import SntInput from "@/components/core/SntInput.vue";
 import { ref } from "vue";
 import SntButton from "@/components/core/SntButton.vue";
-import type { UserWordRequest, UserWordResponse, WordResponse } from "@/module/service";
+import type { ErrorResponse, UserWordRequest, UserWordResponse, WordResponse } from "@/module/service";
 import WordDefinitionView from "@/components/word/WordDefinitionView.vue";
 import RiSearch2Line from "~icons/ri/search-2-line";
 import RiAddCircleLine from "~icons/ri/add-circle-line";
@@ -12,6 +12,8 @@ import { useAuthStore } from "@/stores";
 import SntStatus from "@/components/core/SntStatus.vue";
 import { useRouter } from "vue-router";
 import useApi from "@/api";
+import { AxiosResponse } from "axios";
+import SntAlert from "@/components/core/SntAlert.vue";
 
 const router = useRouter();
 const api = useApi();
@@ -20,6 +22,7 @@ const auth = useAuthStore();
 const loading = ref(false);
 const showStatus = ref(false);
 
+const errorResponse = ref<ErrorResponse | undefined>();
 const userWordResponse = ref<UserWordResponse | undefined>(undefined);
 const searchWordModel = ref();
 const searchWordResponse = ref<WordResponse>();
@@ -51,10 +54,15 @@ const addToList = async () => {
 
 const searchWord = async () => {
   loading.value = true;
+  errorResponse.value = undefined;
+  searchWordResponse.value = undefined;
   await api.word
     .searchWord(searchWordModel.value)
     .then((resp) => {
       searchWordResponse.value = resp.data;
+    })
+    .catch((err: AxiosResponse<ErrorResponse>) => {
+      errorResponse.value = err.data;
     })
     .finally(() => {
       loading.value = false;
@@ -80,6 +88,10 @@ const searchWord = async () => {
         </snt-button>
       </div>
       <word-definition-view v-if="searchWordResponse" :word="searchWordResponse" />
+      <snt-alert v-if="errorResponse" type="error">
+        <template #title> {{ errorResponse.code }} </template>
+        {{ errorResponse.errors[0] }}
+      </snt-alert>
     </div>
 
     <snt-status v-if="showStatus" message="The word has been successfully added to the work list.">

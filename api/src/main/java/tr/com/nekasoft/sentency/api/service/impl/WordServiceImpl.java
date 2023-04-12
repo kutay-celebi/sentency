@@ -13,6 +13,7 @@ import tr.com.nekasoft.sentency.api.data.word.WordPageQueryRequest;
 import tr.com.nekasoft.sentency.api.data.word.WordResponse;
 import tr.com.nekasoft.sentency.api.entity.Word;
 import tr.com.nekasoft.sentency.api.entity.WordDefinition;
+import tr.com.nekasoft.sentency.api.entity.WordDefinitionPhrases;
 import tr.com.nekasoft.sentency.api.exception.ExceptionCode;
 import tr.com.nekasoft.sentency.api.external.google.GoogleTranslationExternalService;
 import tr.com.nekasoft.sentency.api.external.linguarobot.LinguaRobotService;
@@ -59,8 +60,34 @@ public class WordServiceImpl implements WordService {
 
   private WordResponse fetchWordAndSave(String word) {
     LrResponse lrResponse = linguaRobotService.getWord(word);
+
+    if (lrResponse.getEntries() == null || lrResponse.getEntries().isEmpty()) {
+      throw ExceptionCode.DATA_NOT_FOUND.toException();
+    }
+
     Word toBeSaved = Word.builder().word(word).build();
     Set<WordDefinition> definitions = lrResponse.toDefinitions(toBeSaved);
+
+    definitions.stream().forEach(definition -> {
+      WordDefinitionPhrases enDefinitionPhrases = definition.getPhrases().get("en");
+      String translatedDefinition = googleService.translate(enDefinitionPhrases.getDefinition());
+      String translatedDefinitionOf = null;
+
+      if (enDefinitionPhrases.getDefinitionOf() != null) {
+        translatedDefinitionOf = googleService.translate(enDefinitionPhrases.getDefinitionOf());
+      }
+
+      definition
+          .getPhrases()
+          .put("tr", WordDefinitionPhrases
+              .builder()
+              .lang("tr")
+              .definitionOf(translatedDefinitionOf)
+              .definition(translatedDefinition)
+              .wordDefinition(definition)
+              .build());
+    });
+
     toBeSaved.setDefinitions(definitions);
 
     wordRepository.persistAndFlush(toBeSaved);

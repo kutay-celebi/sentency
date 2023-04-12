@@ -25,7 +25,7 @@
       </snt-button>
     </div>
   </div>
-  <snt-alert v-if="isWordNotFound && !isPageLoading" type="error"> No word has been added to the list yet </snt-alert>
+  <snt-alert v-if="isWordNotFound && !isPageLoading" type="error"> No word has been added to the list yet</snt-alert>
 </template>
 
 <script lang="ts" setup>
@@ -126,8 +126,9 @@ const fetchNextReview = async () => {
 onMounted(async () => {
   isPageLoading.value = true;
   await fetchNextReview();
-  await fetchWord();
-  isPageLoading.value = false;
+  await fetchWord().finally(() => {
+    isPageLoading.value = false;
+  });
 });
 </script>
 
