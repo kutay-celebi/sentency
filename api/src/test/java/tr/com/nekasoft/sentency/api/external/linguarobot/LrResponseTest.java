@@ -15,13 +15,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tr.com.nekasoft.sentency.api.data.word.SynonymAntonym;
+import tr.com.nekasoft.sentency.api.entity.Word;
 import tr.com.nekasoft.sentency.api.entity.WordDefinition;
 import tr.com.nekasoft.sentency.api.exception.BusinessException;
 import tr.com.nekasoft.sentency.api.exception.ExceptionCode;
 
 class LrResponseTest {
 
-  private final String word = "word";
+  private final String wordText = "word";
   private final String example = "example";
   private final String definition = "definition";
   private final String partOfSpeech = "partOfSpeech";
@@ -30,18 +31,19 @@ class LrResponseTest {
   private LrLexemes lexeme;
   private LrEntry entry;
   private LrResponse instance;
+  private Word word;
 
   @BeforeEach
   void setUp() {
-
+    word = Word.builder().build();
     sense = LrSense.builder().definition(definition).usageExamples(Collections.singletonList(example)).build();
     lexeme = LrLexemes
         .builder()
-        .lemma(word)
+        .lemma(wordText)
         .partOfSpeech(partOfSpeech)
         .senses(Collections.singletonList(sense))
         .build();
-    entry = LrEntry.builder().entry(word).lexemes(Collections.singletonList(lexeme)).build();
+    entry = LrEntry.builder().entry(wordText).lexemes(Collections.singletonList(lexeme)).build();
     instance = LrResponse.builder().entries(Collections.singletonList(entry)).build();
   }
 
@@ -50,7 +52,7 @@ class LrResponseTest {
     // given
 
     // when
-    Set<WordDefinition> actual = instance.toDefinitions();
+    Set<WordDefinition> actual = instance.toDefinitions(word);
 
     // then
     assertThat(actual, hasSize(1));
@@ -65,15 +67,15 @@ class LrResponseTest {
     sense = LrSense.builder().definition(definition).usageExamples(List.of(example, example)).build();
     lexeme = LrLexemes
         .builder()
-        .lemma(word)
+        .lemma(wordText)
         .partOfSpeech(partOfSpeech)
         .senses(Collections.singletonList(sense))
         .build();
-    entry = LrEntry.builder().entry(word).lexemes(Collections.singletonList(lexeme)).build();
+    entry = LrEntry.builder().entry(wordText).lexemes(Collections.singletonList(lexeme)).build();
     instance = LrResponse.builder().entries(Collections.singletonList(entry)).build();
 
     // when
-    Set<WordDefinition> actual = instance.toDefinitions();
+    Set<WordDefinition> actual = instance.toDefinitions(word);
 
     // then
     assertThat(actual, hasItem(hasProperty("examples", hasSize(2))));
@@ -96,17 +98,17 @@ class LrResponseTest {
 
     lexeme = LrLexemes
         .builder()
-        .lemma(word)
+        .lemma(wordText)
         .partOfSpeech(partOfSpeech)
         .synonymSets(Set.of(synonymAntonym))
         .antonymSets(Set.of(synonymAntonym1))
         .senses(Collections.singletonList(sense))
         .build();
-    entry = LrEntry.builder().entry(word).lexemes(Collections.singletonList(lexeme)).build();
+    entry = LrEntry.builder().entry(wordText).lexemes(Collections.singletonList(lexeme)).build();
     instance = LrResponse.builder().entries(Collections.singletonList(entry)).build();
 
     // when
-    Set<WordDefinition> actual = instance.toDefinitions();
+    Set<WordDefinition> actual = instance.toDefinitions(word);
 
     // then
     assertThat(actual,
@@ -132,17 +134,17 @@ class LrResponseTest {
 
     lexeme = LrLexemes
         .builder()
-        .lemma(word)
+        .lemma(wordText)
         .partOfSpeech(partOfSpeech)
         .synonymSets(Collections.emptySet())
         .antonymSets(Collections.emptySet())
         .senses(Collections.singletonList(sense))
         .build();
-    entry = LrEntry.builder().entry(word).lexemes(Collections.singletonList(lexeme)).build();
+    entry = LrEntry.builder().entry(wordText).lexemes(Collections.singletonList(lexeme)).build();
     instance = LrResponse.builder().entries(Collections.singletonList(entry)).build();
 
     // when
-    Set<WordDefinition> actual = instance.toDefinitions();
+    Set<WordDefinition> actual = instance.toDefinitions(word);
 
     // then
     assertThat(actual, hasItem(hasProperty("definition", equalTo("sub"))));
@@ -156,7 +158,7 @@ class LrResponseTest {
     instance = LrResponse.builder().entries(null).build();
 
     // when
-    BusinessException actual = Assertions.assertThrows(BusinessException.class, () -> instance.toDefinitions());
+    BusinessException actual = Assertions.assertThrows(BusinessException.class, () -> instance.toDefinitions(word));
 
     // then
     assertThat(actual.getCode(), equalTo(ExceptionCode.DATA_NOT_FOUND.getCode()));
@@ -165,11 +167,11 @@ class LrResponseTest {
   @Test
   void lexemeIsNull() {
     // given
-    entry = LrEntry.builder().entry(word).lexemes(null).build();
+    entry = LrEntry.builder().entry(wordText).lexemes(null).build();
     instance = LrResponse.builder().entries(Collections.singletonList(entry)).build();
 
     // when
-    BusinessException actual = Assertions.assertThrows(BusinessException.class, () -> instance.toDefinitions());
+    BusinessException actual = Assertions.assertThrows(BusinessException.class, () -> instance.toDefinitions(word));
 
     // then
     assertThat(actual.getCode(), equalTo(ExceptionCode.DATA_NOT_FOUND.getCode()));
@@ -178,12 +180,12 @@ class LrResponseTest {
   @Test
   void sensesIsNull() {
     // given
-    lexeme = LrLexemes.builder().lemma(word).partOfSpeech(partOfSpeech).senses(null).build();
-    entry = LrEntry.builder().entry(word).lexemes(Collections.singletonList(lexeme)).build();
+    lexeme = LrLexemes.builder().lemma(wordText).partOfSpeech(partOfSpeech).senses(null).build();
+    entry = LrEntry.builder().entry(wordText).lexemes(Collections.singletonList(lexeme)).build();
     instance = LrResponse.builder().entries(Collections.singletonList(entry)).build();
 
     // when
-    BusinessException actual = Assertions.assertThrows(BusinessException.class, () -> instance.toDefinitions());
+    BusinessException actual = Assertions.assertThrows(BusinessException.class, () -> instance.toDefinitions(word));
 
     // then
     assertThat(actual.getCode(), equalTo(ExceptionCode.DATA_NOT_FOUND.getCode()));
@@ -195,17 +197,17 @@ class LrResponseTest {
     sense = LrSense.builder().definition(definition).usageExamples(null).build();
     lexeme = LrLexemes
         .builder()
-        .lemma(word)
+        .lemma(wordText)
         .partOfSpeech(partOfSpeech)
         .synonymSets(null)
         .antonymSets(null)
         .senses(Collections.singletonList(sense))
         .build();
-    entry = LrEntry.builder().entry(word).lexemes(Collections.singletonList(lexeme)).build();
+    entry = LrEntry.builder().entry(wordText).lexemes(Collections.singletonList(lexeme)).build();
     instance = LrResponse.builder().entries(Collections.singletonList(entry)).build();
 
     // when
-    Set<WordDefinition> actual = instance.toDefinitions();
+    Set<WordDefinition> actual = instance.toDefinitions(word);
 
     // then
     assertThat(actual, hasItem(hasProperty("synonymAntonym", empty())));
@@ -217,15 +219,15 @@ class LrResponseTest {
     sense = LrSense.builder().definition(definition).usageExamples(null).build();
     lexeme = LrLexemes
         .builder()
-        .lemma(word)
+        .lemma(wordText)
         .partOfSpeech(partOfSpeech)
         .senses(Collections.singletonList(sense))
         .build();
-    entry = LrEntry.builder().entry(word).lexemes(Collections.singletonList(lexeme)).build();
+    entry = LrEntry.builder().entry(wordText).lexemes(Collections.singletonList(lexeme)).build();
     instance = LrResponse.builder().entries(Collections.singletonList(entry)).build();
 
     // when
-    Set<WordDefinition> actual = instance.toDefinitions();
+    Set<WordDefinition> actual = instance.toDefinitions(word);
 
     // then
     assertThat(actual, hasItem(hasProperty("examples", empty())));

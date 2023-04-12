@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import tr.com.nekasoft.sentency.api.data.word.SynonymAntonym;
+import tr.com.nekasoft.sentency.api.entity.Word;
 import tr.com.nekasoft.sentency.api.entity.WordDefinition;
 import tr.com.nekasoft.sentency.api.entity.WordDefinitionExamples;
 import tr.com.nekasoft.sentency.api.entity.WordSynonymAntonym;
@@ -27,7 +28,7 @@ public class LrResponse implements Serializable {
 
   private List<LrEntry> entries;
 
-  public Set<WordDefinition> toDefinitions() {
+  public Set<WordDefinition> toDefinitions(Word word) {
 
     if (entries == null) {
       throw ExceptionCode.DATA_NOT_FOUND.toException();
@@ -47,17 +48,18 @@ public class LrResponse implements Serializable {
       return lexeme.getSenses().stream().flatMap(sense -> {
 
         if (sense.getSubSenses() != null) {
-          return sense.getSubSenses().stream().map(subSense -> mapSenseToDefinition(lexeme, subSense, sense));
+          return sense.getSubSenses().stream().map(subSense -> mapSenseToDefinition(word, lexeme, subSense, sense));
         }
 
-        return Stream.of(mapSenseToDefinition(lexeme, sense, null));
+        return Stream.of(mapSenseToDefinition(word, lexeme, sense, null));
       });
     }).collect(Collectors.toSet());
   }
 
-  private static WordDefinition mapSenseToDefinition(LrLexemes lexeme, LrSense sense, LrSense parent) {
+  private static WordDefinition mapSenseToDefinition(Word word, LrLexemes lexeme, LrSense sense, LrSense parent) {
     WordDefinition definition = WordDefinition
         .builder()
+        .word(word)
         .definition(sense.getDefinition())
         .definitionOf(parent != null ? parent.getDefinition() : null)
         .partOfSpeech(lexeme.getPartOfSpeech())

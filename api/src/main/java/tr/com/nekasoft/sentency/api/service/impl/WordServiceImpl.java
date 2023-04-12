@@ -59,9 +59,10 @@ public class WordServiceImpl implements WordService {
 
   private WordResponse fetchWordAndSave(String word) {
     LrResponse lrResponse = linguaRobotService.getWord(word);
-    Set<WordDefinition> definitions = lrResponse.toDefinitions();
+    Word toBeSaved = Word.builder().word(word).build();
+    Set<WordDefinition> definitions = lrResponse.toDefinitions(toBeSaved);
+    toBeSaved.setDefinitions(definitions);
 
-    Word toBeSaved = Word.builder().word(word).definitions(definitions).build();
     wordRepository.persistAndFlush(toBeSaved);
     return toBeSaved.toResponse();
   }

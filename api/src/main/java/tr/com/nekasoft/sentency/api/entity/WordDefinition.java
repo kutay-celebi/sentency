@@ -59,7 +59,6 @@ public class WordDefinition extends BaseEntity {
     var builder = WordDefinitionResponse
         .builder()
         .id(id)
-        .definitionTr(definitionTr)
         .definitionOf(definitionOf)
         .partOfSpeech(partOfSpeech)
         .synonyms(synonymAntonym
