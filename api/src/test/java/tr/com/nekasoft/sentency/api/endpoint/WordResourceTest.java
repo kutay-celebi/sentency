@@ -116,7 +116,7 @@ class WordResourceTest extends AbstractWordTestSuite {
 
       // then
       actual.statusCode(404);
-      actual.body("body", equalTo(ExceptionCode.DATA_NOT_FOUND.getCode()));
+      actual.body("code", equalTo(ExceptionCode.DATA_NOT_FOUND.getCode()));
 
     }
   }
