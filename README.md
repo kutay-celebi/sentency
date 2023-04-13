@@ -22,8 +22,9 @@ checks. The learning process of a word is as follows:
 # Roadmap
 
 In the future, the application will be made to run on AWS cloud systems with native image. The learning algorithm will
-be improved and users will be able to use different materials (image, gif, video and so on.) while learning. It is
-currently being deployed with a dedicated jenkins server.
+be improved and users will be able to use different materials (image, gif, video and so on.) while learning. At the
+moment, it is only designed for mobile browsers, but web browser and mobile native application development will also be
+done.
 
 # Prerequisites
 
