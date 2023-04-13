@@ -16,7 +16,7 @@ checks. The learning process of a word is as follows:
 - Search for the word
 - Add the word to the learning list
 - Make a sentence with the word
-- Sec the difficulty of the word
+- Select the difficulty of the word
 - Regularly review the words in the list
 
 # Roadmap
