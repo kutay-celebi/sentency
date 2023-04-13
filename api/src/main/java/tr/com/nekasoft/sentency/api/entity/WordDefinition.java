@@ -43,12 +43,12 @@ public class WordDefinition extends BaseEntity {
   private Set<WordDefinitionExamples> examples = new LinkedHashSet<>();
 
   @Builder.Default
-  @OneToMany(mappedBy = "wordDefinition", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @OneToMany(mappedBy = "wordDefinition", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private Set<WordSynonymAntonym> synonymAntonym = new LinkedHashSet<>();
 
   @Builder.Default
   @MapKey(name = "lang")
-  @OneToMany(mappedBy = "wordDefinition", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @OneToMany(mappedBy = "wordDefinition", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private Map<String, WordDefinitionPhrases> phrases = new HashMap<>();
 
   public WordDefinitionResponse toResponse() {

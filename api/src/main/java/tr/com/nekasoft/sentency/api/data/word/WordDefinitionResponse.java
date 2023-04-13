@@ -23,5 +23,6 @@ public class WordDefinitionResponse implements Serializable {
   private Set<String> examples;
   private Set<WordSynonymAntonymResponse> synonyms;
   private Set<WordSynonymAntonymResponse> antonyms;
+  @Builder.Default
   private Map<String, WordDefinitionPhrasesResponse> phrases = new HashMap<>();
 }
