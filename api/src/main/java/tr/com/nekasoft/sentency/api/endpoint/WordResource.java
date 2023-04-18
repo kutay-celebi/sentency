@@ -34,7 +34,7 @@ public class WordResource {
   @CacheResult(cacheName = "search-word")
   @Path("/{word}")
   public Response getWord(@PathParam("word") String word) {
-    return Response.ok(wordService.getWord(word)).build();
+    return Response.ok(wordService.getWord(word.trim().toLowerCase())).build();
   }
 
   @PUT
