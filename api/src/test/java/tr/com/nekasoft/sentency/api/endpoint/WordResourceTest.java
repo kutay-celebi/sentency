@@ -121,6 +121,41 @@ class WordResourceTest extends AbstractWordTestSuite {
     }
   }
 
+  @Nested
+  @TestHTTPEndpoint(WordResource.class)
+  @TestSecurity(authorizationEnabled = false)
+  class VoteDefinition {
+
+    @Test
+    void success() {
+      // given
+      Word word = saveWord();
+
+      // when
+      ValidatableResponse actual = given()
+          .when()
+          .put("/vote/{definition-id}", word.getDefinitions().iterator().next().getId())
+          .then()
+          .log()
+          .all();
+
+      // then
+      actual.statusCode(200);
+
+    }
+
+    @Test
+    void unknownWodDefinition() {
+      // given
+      // when
+      ValidatableResponse actual = given().when().put("/vote/{definition-id}", "unknown").then().log().all();
+
+      // then
+      actual.statusCode(404);
+      actual.body("code", equalTo(ExceptionCode.DATA_NOT_FOUND.getCode()));
+
+    }
+  }
 
   @Nested
   @TestHTTPEndpoint(WordResource.class)

@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tr.com.nekasoft.sentency.api.data.PageResponse;
+import tr.com.nekasoft.sentency.api.data.word.WordDefinitionResponse;
 import tr.com.nekasoft.sentency.api.data.word.WordFindRequest;
 import tr.com.nekasoft.sentency.api.data.word.WordPageQueryRequest;
 import tr.com.nekasoft.sentency.api.data.word.WordResponse;
@@ -18,6 +19,7 @@ import tr.com.nekasoft.sentency.api.exception.ExceptionCode;
 import tr.com.nekasoft.sentency.api.external.google.GoogleTranslationExternalService;
 import tr.com.nekasoft.sentency.api.external.linguarobot.LinguaRobotService;
 import tr.com.nekasoft.sentency.api.external.linguarobot.LrResponse;
+import tr.com.nekasoft.sentency.api.repository.WordDefinitionRepository;
 import tr.com.nekasoft.sentency.api.repository.WordRepository;
 import tr.com.nekasoft.sentency.api.service.WordService;
 
@@ -33,7 +35,22 @@ public class WordServiceImpl implements WordService {
   protected WordRepository wordRepository;
 
   @Inject
+  protected WordDefinitionRepository wordDefinitionRepository;
+
+  @Inject
   protected GoogleTranslationExternalService googleService;
+
+  @Override
+  @Transactional
+  public WordDefinitionResponse voteDefinition(String definitionId) {
+    WordDefinition wordDefinition = wordDefinitionRepository
+        .softFindById(definitionId)
+        .orElseThrow(ExceptionCode.DATA_NOT_FOUND::toException);
+
+    wordDefinition.setVote(wordDefinition.getVote() + 1);
+    wordDefinitionRepository.persistAndFlush(wordDefinition);
+    return wordDefinition.toResponse();
+  }
 
   @Override
   public PageResponse<WordResponse> query(WordPageQueryRequest request) {

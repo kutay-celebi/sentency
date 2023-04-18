@@ -1,11 +1,13 @@
 package tr.com.nekasoft.sentency.api;
 
 import java.time.Instant;
+import java.util.Collections;
 import javax.inject.Inject;
 import org.apache.commons.lang3.RandomStringUtils;
 import tr.com.nekasoft.sentency.api.entity.User;
 import tr.com.nekasoft.sentency.api.entity.UserWord;
 import tr.com.nekasoft.sentency.api.entity.Word;
+import tr.com.nekasoft.sentency.api.entity.WordDefinition;
 import tr.com.nekasoft.sentency.api.repository.UserWordRepository;
 import tr.com.nekasoft.sentency.api.repository.WordRepository;
 
@@ -18,6 +20,10 @@ public abstract class AbstractWordTestSuite extends AbstractUserTestSuite {
 
   protected Word saveWord() {
     Word word = Word.builder().word(RandomStringUtils.randomAlphanumeric(10)).build();
+
+    WordDefinition definition = WordDefinition.builder().word(word).build();
+    word.setDefinitions(Collections.singleton(definition));
+
     wordRepository.persistAndFlush(word);
     return word;
   }

@@ -2,6 +2,7 @@ package tr.com.nekasoft.sentency.api.endpoint;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import io.quarkus.cache.CacheInvalidate;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.security.Authenticated;
 import javax.annotation.Resource;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -33,6 +35,13 @@ public class WordResource {
   @Path("/{word}")
   public Response getWord(@PathParam("word") String word) {
     return Response.ok(wordService.getWord(word)).build();
+  }
+
+  @PUT
+  @CacheInvalidate(cacheName = "search-word")
+  @Path("/vote/{definition-id}")
+  public Response voteDefinition(@PathParam("definition-id") String definitionId) {
+    return Response.ok(wordService.voteDefinition(definitionId)).build();
   }
 
   @POST
