@@ -85,7 +85,7 @@ class WordResourceTest extends AbstractWordTestSuite {
 
       // then
       actual.statusCode(200);
-      actual.body("word", equalTo(word));
+      actual.body("word", equalTo(word.toLowerCase().trim()));
       actual.body("definitions.phrases.en.definition", contains(word));
       actual.body("definitions.phrases.en.partOfSpeech", contains("noun"));
       actual.body("definitions.phrases.tr.definition", contains("translated"));
@@ -230,7 +230,7 @@ class WordResourceTest extends AbstractWordTestSuite {
         .build();
     LrEntry entry = LrEntry.builder().entry(word).lexemes(Collections.singletonList(lexeme)).build();
     LrResponse response = LrResponse.builder().entries(Collections.singletonList(entry)).build();
-    when(linguaRobotService.getWord(word)).thenReturn(response);
+    when(linguaRobotService.getWord(word.toLowerCase().trim())).thenReturn(response);
   }
 
 }
