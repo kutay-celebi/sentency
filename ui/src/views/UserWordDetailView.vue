@@ -84,7 +84,7 @@ onBeforeMount(async () => {
         </snt-list>
       </div>
     </snt-card>
-    <snt-loading v-else loading="loading" />
+    <snt-loading v-else :loading="loading" />
   </transition>
 </template>
 
