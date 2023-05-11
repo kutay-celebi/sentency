@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@iconify-json/ri": "^1.1.7",
+    "@iconify-json/solar": "^1.1.1",
     "@iconify-json/svg-spinners": "^1.1.1",
     "@rushstack/eslint-patch": "^1.2.0",
     "@types/jsdom": "^20.0.1",

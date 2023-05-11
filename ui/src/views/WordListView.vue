@@ -8,9 +8,10 @@ import { PageResponse, UserWordPageRequest, UserWordResponse } from "@/module/se
 import { useDateUtility } from "@/composable/date-utility";
 import SntPagination from "@/components/core/SntPagination.vue";
 import SntAlert from "@/components/core/SntAlert.vue";
-import SntButton from "@/components/core/SntButton.vue";
+import { useRouter } from "vue-router";
 
 const api = useApi();
+const router = useRouter();
 const authStore = useAuthStore();
 
 const isLoading = ref<boolean>(false);
@@ -41,7 +42,6 @@ const fetchUserWords = async () => {
   await api.userWord
     .query(query.value)
     .then((resp) => {
-      resp.data.content.forEach((word) => (word.showContext = false));
       words.value = resp.data;
     })
     .finally(() => {
@@ -50,20 +50,7 @@ const fetchUserWords = async () => {
 };
 
 const onClickWord = (word: UserWordResponse) => {
-  word.showContext = !word.showContext;
-};
-
-const removeReviewList = async (word: UserWordResponse) => {
-  isLoading.value = true;
-  await api.userWord
-    .removeFromList(word.id)
-    .then((resp) => {
-      word.showContext = false;
-      word.isActive = resp.data.isActive;
-    })
-    .finally(() => {
-      isLoading.value = false;
-    });
+  router.push({ name: "user-word-detail-view", params: { id: word.id } });
 };
 
 onBeforeMount(() => {
@@ -76,12 +63,7 @@ onBeforeMount(() => {
     <snt-pagination v-model="query.page" :total="words.totalPage" />
     <snt-list ref="listRef">
       <snt-list-item v-for="word in words.content" :key="word.id" @click="() => onClickWord(word)">
-        <div v-if="word.showContext">
-          <snt-button color="error" :loading="isLoading" @click.stop="() => removeReviewList(word)">
-            Remove From Review List
-          </snt-button>
-        </div>
-        <div v-else>
+        <div>
           <div>{{ word.word }}</div>
           <div style="display: flex">
             <div>

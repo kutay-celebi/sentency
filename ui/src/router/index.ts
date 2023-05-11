@@ -6,6 +6,7 @@ import ErrorView from "@/views/ErrorView.vue";
 import SentenceView from "@/views/SentenceView.vue";
 import UserWordView from "@/views/UserWordView.vue";
 import WordListView from "@/views/WordListView.vue";
+import UserWordDetailView from "@/views/UserWordDetailView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -3,9 +3,11 @@
 :root {
   --color-primary: #457cb6;
   --color-primary-hover: #4b87c6;
-  --color-error:#dc3545;
+  --color-error: #dc3545;
   --color-error-hover: #dc5865;
-  --color-success:#28a745;
+  --color-warn: #dc9135;
+  --color-warn-hover: #f2a03b;
+  --color-success: #28a745;
   --color-success-hover: #41c65f;
 
   --color-active: var(--color-primary);

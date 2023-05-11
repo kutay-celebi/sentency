@@ -52,8 +52,6 @@ export interface UserWordResponse {
   difficulty?: Difficulty;
   count: number;
   isActive: boolean;
-  // additional
-  showContext?: boolean;
 }
 
 export interface SentenceRequest {
@@ -73,6 +71,25 @@ export interface SentencePersistResponse {
   wordId: string;
   userId: string;
   userWordId: string;
+}
+
+export interface SentencePageQueryRequest {
+  userId: StringQueryItem;
+  wordId: StringQueryItem;
+  word?: StringQueryItem;
+  sorts?: SortItem[];
+  size?: number;
+  page?: number;
+}
+
+export interface SentenceResponse {
+  id: string;
+  sentence: string;
+  wordId: string;
+  word: string;
+  difficulty: Difficulty;
+  nextReview: Date;
+  lastReview: Date;
 }
 
 export type Difficulty = "EASY" | "MEDIUM" | "HARD";

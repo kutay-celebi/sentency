@@ -27,6 +27,9 @@ devDependencies:
   '@iconify-json/ri':
     specifier: ^1.1.7
     version: 1.1.7
+  '@iconify-json/solar':
+    specifier: ^1.1.1
+    version: 1.1.1
   '@iconify-json/svg-spinners':
     specifier: ^1.1.1
     version: 1.1.1
@@ -384,6 +387,12 @@ packages:
 
   /@iconify-json/ri@1.1.7:
     resolution: { integrity: sha512-ra80AV2Q0wFuzT3YB48DKy0q3IWmmIh2ZbDnMGNX2Wz1lOx9PHgcewVvThk8OaUJOeGkneTMAzKQ64MRrOXEpg== }
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/solar@1.1.1:
+    resolution: { integrity: sha512-VN7vPHaUW5cASnm2iN986bwTMGans5zAk1cVYB6nAGDhWjqaBMS6bmYmlpAYpuLk08uMAp2YtLkC23XFQd1zhg== }
     dependencies:
       '@iconify/types': 2.0.0
     dev: true

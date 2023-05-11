@@ -1,6 +1,13 @@
 import axiosInstance from "@/module/axios";
 import { AxiosResponse } from "axios";
-import { SentencePersistResponse, SentenceRequest, SentenceTranslateResponse } from "@/module/service";
+import {
+  PageResponse,
+  SentencePageQueryRequest,
+  SentencePersistResponse,
+  SentenceRequest,
+  SentenceResponse,
+  SentenceTranslateResponse,
+} from "@/module/service";
 
 export const translate = (sentence: string | undefined): Promise<AxiosResponse<SentenceTranslateResponse>> => {
   return axiosInstance({
@@ -14,5 +21,13 @@ export const addSentence = (sentence: SentenceRequest): Promise<AxiosResponse<Se
     url: `/sentence`,
     method: "post",
     data: { ...sentence },
+  });
+};
+
+export const query = (query: SentencePageQueryRequest): Promise<AxiosResponse<PageResponse<SentenceResponse>>> => {
+  return axiosInstance({
+    url: `/sentence/query`,
+    method: "post",
+    data: { ...query },
   });
 };
