@@ -38,6 +38,14 @@ const router = createRouter({
           },
         },
         {
+          path: "/word-reviews/:id",
+          component: UserWordDetailView,
+          name: "word-reviews",
+          meta: {
+            auth: true,
+          },
+        },
+        {
           path: "/sentence/:wordid?",
           component: SentenceView,
           name: "sentence",

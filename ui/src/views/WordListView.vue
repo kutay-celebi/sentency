@@ -50,7 +50,7 @@ const fetchUserWords = async () => {
 };
 
 const onClickWord = (word: UserWordResponse) => {
-  router.push({ name: "user-word-detail-view", params: { id: word.id } });
+  router.push({ name: "word-reviews", params: { id: word.id } });
 };
 
 onBeforeMount(() => {
