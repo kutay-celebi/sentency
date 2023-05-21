@@ -6,7 +6,7 @@ import {
   UserWordPageRequest,
   UserWordRequest,
   UserWordResponse,
-} from "@/module/service";
+} from "@/types/service-types";
 
 export const removeFromList = (id: string): Promise<AxiosResponse<UserWordResponse>> => {
   return axiosInstance({

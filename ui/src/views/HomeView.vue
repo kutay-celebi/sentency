@@ -2,7 +2,7 @@
 import SntInput from "@/components/core/SntInput.vue";
 import { ref } from "vue";
 import SntButton from "@/components/core/SntButton.vue";
-import type { ErrorResponse, UserWordRequest, UserWordResponse, WordResponse } from "@/module/service";
+import type { ErrorResponse, UserWordRequest, UserWordResponse, WordResponse } from "@/types/service-types";
 import WordDefinitionView from "@/components/word/WordDefinitionView.vue";
 import RiSearch2Line from "~icons/ri/search-2-line";
 import RiAddCircleLine from "~icons/ri/add-circle-line";

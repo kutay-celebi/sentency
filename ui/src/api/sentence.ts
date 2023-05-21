@@ -7,7 +7,7 @@ import {
   SentenceRequest,
   SentenceResponse,
   SentenceTranslateResponse,
-} from "@/module/service";
+} from "@/types/service-types";
 
 export const translate = (sentence: string | undefined): Promise<AxiosResponse<SentenceTranslateResponse>> => {
   return axiosInstance({

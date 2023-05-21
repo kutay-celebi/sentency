@@ -75,7 +75,8 @@ export interface SentencePersistResponse {
 
 export interface SentencePageQueryRequest {
   userId: StringQueryItem;
-  wordId: StringQueryItem;
+  userWordId?: StringQueryItem;
+  wordId?: StringQueryItem;
   word?: StringQueryItem;
   sorts?: SortItem[];
   size?: number;

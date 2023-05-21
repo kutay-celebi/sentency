@@ -30,6 +30,8 @@ public class SentencePageQueryRequest extends PageQueryRequest {
   @Valid
   private StringQueryItem wordId;
   @Valid
+  private StringQueryItem userWordId;
+  @Valid
   private StringQueryItem word;
   @Builder.Default
   private List<SortItem> sorts = new ArrayList<>();
@@ -43,6 +45,9 @@ public class SentencePageQueryRequest extends PageQueryRequest {
     if (wordId != null && !wordId.getValue().isBlank()) {
       query.append(AND).append(wordId.toQuery("userWord.word.id", "wordId"));
     }
+    if (userWordId != null && !userWordId.getValue().isBlank()) {
+      query.append(AND).append(userWordId.toQuery("userWord.id", "userWordId"));
+    }
 
     return query.toString();
   }
@@ -55,6 +60,9 @@ public class SentencePageQueryRequest extends PageQueryRequest {
     }
     if (wordId != null && !wordId.getValue().isBlank()) {
       parameters.and("wordId", wordId.parameterValue());
+    }
+    if (userWordId != null && !userWordId.getValue().isBlank()) {
+      parameters.and("userWordId", userWordId.parameterValue());
     }
     return parameters;
   }

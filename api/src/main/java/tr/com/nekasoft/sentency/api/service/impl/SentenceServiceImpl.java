@@ -40,16 +40,12 @@ public class SentenceServiceImpl implements SentenceService {
 
     DefaultQueryRequest query = DefaultQueryRequest.builder()
         .query("user.id = :userId and word.id = :wordId")
-        .parameters(Parameters.with("userId", request.getUserId())
-            .and("wordId", request.getWordId()))
+        .parameters(Parameters.with("userId", request.getUserId()).and("wordId", request.getWordId()))
         .build();
     UserWord userWord = userWordRepository.softFind(query)
         .firstResultOptional()
-        .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(Map.of(
-            "user-id",
-            request.getUserId(),
-            "word-id",
-            request.getWordId())));
+        .orElseThrow(() -> ExceptionCode.DATA_NOT_FOUND.toException(
+            Map.of("user-id", request.getUserId(), "word-id", request.getWordId())));
     Sentence toBeSaved = Sentence.builder()
         .userWord(userWord)
         .sentence(request.getSentence())

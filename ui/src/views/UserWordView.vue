@@ -35,7 +35,7 @@
 <script lang="ts" setup>
 import { useRoute, useRouter } from "vue-router";
 import { onBeforeMount, ref } from "vue";
-import type { Difficulty, UserWordResponse, WordResponse } from "@/module/service";
+import type { Difficulty, UserWordResponse, WordResponse } from "@/types/service-types";
 import SntButton from "@/components/core/SntButton.vue";
 import { useDateUtility } from "@/composable/date-utility";
 import useApi from "@/api";

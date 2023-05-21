@@ -14,11 +14,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.RestPath;
+import org.jboss.resteasy.reactive.RestResponse;
+import tr.com.nekasoft.sentency.api.data.PageResponse;
 import tr.com.nekasoft.sentency.api.data.userword.UserWordDifficultyRequest;
 import tr.com.nekasoft.sentency.api.data.userword.UserWordPageRequest;
 import tr.com.nekasoft.sentency.api.data.userword.UserWordRequest;
+import tr.com.nekasoft.sentency.api.data.userword.UserWordResponse;
 import tr.com.nekasoft.sentency.api.service.UserWordService;
 
 @Resource
@@ -32,40 +34,40 @@ public class UserWordResource {
 
   @GET
   @Path("/{user-id}/next-review")
-  public Response nextReview(@PathParam("user-id") String userId) {
-    return Response.ok(userWordService.getNextReview(userId)).build();
+  public RestResponse<UserWordResponse> nextReview(@PathParam("user-id") String userId) {
+    return RestResponse.ok(userWordService.getNextReview(userId));
   }
 
   @GET
   @Path("/{id}")
-  public Response findById(@PathParam("id") String id) {
-    return Response.ok(userWordService.findById(id)).build();
+  public RestResponse<UserWordResponse> findById(@PathParam("id") String id) {
+    return RestResponse.ok(userWordService.findById(id));
   }
 
   @POST
   @Consumes(APPLICATION_JSON)
   @Path("/query")
-  public Response query(@Valid UserWordPageRequest request) {
-    return Response.ok(userWordService.query(request)).build();
+  public RestResponse<PageResponse<UserWordResponse>> query(@Valid UserWordPageRequest request) {
+    return RestResponse.ok(userWordService.query(request));
   }
 
   @PUT
   @Consumes(APPLICATION_JSON)
   @Path("/difficulty")
-  public Response difficulty(@Valid UserWordDifficultyRequest request) {
-    return Response.ok(userWordService.adjustDifficulty(request)).build();
+  public RestResponse<UserWordResponse> difficulty(@Valid UserWordDifficultyRequest request) {
+    return RestResponse.ok(userWordService.adjustDifficulty(request));
   }
 
   @POST
   @Consumes(APPLICATION_JSON)
-  public Response addWord(@Valid UserWordRequest request) {
-    return Response.ok(userWordService.addWord(request)).build();
+  public RestResponse<UserWordResponse> addWord(@Valid UserWordRequest request) {
+    return RestResponse.ok(userWordService.addWord(request));
   }
 
   @DELETE
   @Consumes(APPLICATION_JSON)
   @Path("/{user-word-id}")
-  public Response removeWord(@RestPath("user-word-id") String userWordId) {
-    return Response.ok(userWordService.removeReviewList(userWordId)).build();
+  public RestResponse<UserWordResponse> removeWord(@RestPath("user-word-id") String userWordId) {
+    return RestResponse.ok(userWordService.removeReviewList(userWordId));
   }
 }

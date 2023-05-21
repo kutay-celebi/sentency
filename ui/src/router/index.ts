@@ -6,7 +6,7 @@ import ErrorView from "@/views/ErrorView.vue";
 import SentenceView from "@/views/SentenceView.vue";
 import UserWordView from "@/views/UserWordView.vue";
 import WordListView from "@/views/WordListView.vue";
-import UserWordDetailView from "@/views/UserWordDetailView.vue";
+import UserWordReviewsView from "@/views/UserWordReviewsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,7 +39,7 @@ const router = createRouter({
         },
         {
           path: "/word-reviews/:id",
-          component: UserWordDetailView,
+          component: UserWordReviewsView,
           name: "word-reviews",
           meta: {
             auth: true,

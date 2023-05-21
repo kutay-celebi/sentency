@@ -41,7 +41,7 @@ import { ref } from "vue";
 import SntButton from "@/components/core/SntButton.vue";
 import SntForm from "@/components/core/SntForm.vue";
 
-import type { ErrorResponse } from "@/module/service";
+import type { ErrorResponse } from "@/types/service-types";
 import SntAlert from "@/components/core/SntAlert.vue";
 import { useAuthStore } from "@/stores";
 import { useRouter } from "vue-router";

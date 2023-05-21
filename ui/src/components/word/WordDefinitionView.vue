@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { PropType } from "vue";
 import { computed, ref } from "vue";
-import type { WordResponse, WordSynonymAntonymResponse } from "@/module/service";
+import type { WordResponse, WordSynonymAntonymResponse } from "@/types/service-types";
 import SntTabView from "@/components/core/SntTabView.vue";
 import type { SntTab } from "@/components/types";
 

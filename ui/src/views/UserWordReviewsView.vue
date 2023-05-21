@@ -8,7 +8,7 @@ import {
   SentencePageQueryRequest,
   SentenceResponse,
   UserWordResponse,
-} from "@/module/service";
+} from "@/types/service-types";
 import SntCard from "@/components/core/SntCard.vue";
 import SntAlert from "@/components/core/SntAlert.vue";
 import SntLoading from "@/components/core/SntLoading.vue";
@@ -42,9 +42,9 @@ onBeforeMount(async () => {
           operator: QueryItem.OPERATOR_EQUAL,
           value: authStore.userId,
         },
-        wordId: {
+        userWordId: {
           operator: QueryItem.OPERATOR_EQUAL,
-          value: userWord.value?.wordId as string,
+          value: route.params.id as string,
         },
       };
     })
@@ -59,6 +59,7 @@ onBeforeMount(async () => {
   }
 });
 </script>
+
 <template>
   <transition appear name="fade">
     <snt-alert v-if="!loading && !userWord"></snt-alert>

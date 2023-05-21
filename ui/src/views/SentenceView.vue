@@ -32,7 +32,7 @@
 import RiCheckboxCircleLine from "~icons/ri/checkbox-circle-line";
 import RiChatCheckLine from "~icons/ri/chat-check-line";
 import { onMounted, ref } from "vue";
-import type { SentenceRequest, UserWordResponse, WordResponse } from "@/module/service";
+import type { SentenceRequest, UserWordResponse, WordResponse } from "@/types/service-types";
 import { useAuthStore } from "@/stores";
 import SntInput from "@/components/core/SntInput.vue";
 import SntButton from "@/components/core/SntButton.vue";

@@ -4,7 +4,7 @@ import SntListItem from "@/components/core/SntListItem.vue";
 import { onBeforeMount, ref, watch } from "vue";
 import useApi from "@/api";
 import { useAuthStore } from "@/stores";
-import { PageResponse, UserWordPageRequest, UserWordResponse } from "@/module/service";
+import { PageResponse, UserWordPageRequest, UserWordResponse } from "@/types/service-types";
 import { useDateUtility } from "@/composable/date-utility";
 import SntPagination from "@/components/core/SntPagination.vue";
 import SntAlert from "@/components/core/SntAlert.vue";

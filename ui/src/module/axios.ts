@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { useAuthStore } from "@/stores";
 import { useNotification } from "@/module/notification";
-import { ErrorResponse } from "@/module/service";
+import { ErrorResponse } from "@/types/service-types";
 
 const axiosInstance = axios.create({
   baseURL: "/api",
